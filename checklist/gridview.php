@@ -241,7 +241,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
             },
             editRow: function (recordId){
                 //console.log(recordId);
-                var record = recordId;//this.gridData[recordId];
+                var record = recordId;//this.gridData[recordId]; added comment
 
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
