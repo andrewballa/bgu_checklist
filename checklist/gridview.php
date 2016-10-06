@@ -273,7 +273,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                 var stage = record.StageName!=undefined?record.StageName:"";
                 var prog = record._ProgramInterestedIn0!=undefined?record._ProgramInterestedIn0:"";
                 var owner = record.OwnerName!=undefined?record.OwnerName:"";
-
+                that.gridData.$remove(record);
                 //sweet alert modal, which handles the edit form and ajax request to save data
                 swal({
                     title: 'Edit Applicant',
@@ -306,35 +306,41 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                                 data: data
                             }).done(function (response,statusText,xhr) {
                                 resolve(response);
+                                that.gridData.push(data);
+                                swal({
+                                    type: 'success',
+                                    title: 'Saved Data',
+                                    html: response
+                                })
                             }).fail(function (xhr,statusText,error) {
                                 reject("Error - error code:" + xhr.status);
+                                that.gridData.push(record);
+                                alert("Fail");
                             })
                         })
                     }
                 }).then(function (response) {
-                    var data = {};
+                    /*var data = {};
                     data.fname = $('#fname').val();
                     data.lname= $('#lname').val();
                     data.stage = $('#stage').val();
                     data.prog = $('#prog').val();
-                    data.owner = $('#owner').val();
+                    data.owner = $('#owner').val();*/
 
-                    swal({
-                     type: 'success',
-                     title: 'Saved Data',
-                     html: response
-                     })
-                    var n = 0;
+
+                    /*var n = 0;
                     var result = $.grep(vm.gridData, function(element,index) {
                         if(element.Id == id)
                         {
                             n=index;
                         }
                     });
+
+
                     vm.gridData[n].FirstName = data.fname;
                     vm.gridData[n].LastName = data.lname;
                     vm.gridData[n].StageName = data.stage;
-                    vm.gridData[n]._ProgramInterestedIn0 = data.prog;
+                    vm.gridData[n]._ProgramInterestedIn0 = data.prog;*/
                 })
             }
         }
