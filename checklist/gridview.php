@@ -209,6 +209,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
         </tr>
         </tbody>
     </table>
+    <pre>{{$data | json}}</pre>
 </div>
 
 
@@ -218,7 +219,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
     //var contacts = <?php /*echo json_encode(fetchContacts());*/ ?>
 
     // bootstrap the demo
-    var demo = new Vue({
+    var vm = new Vue({
         el: '#app',
         data: {
             order: 1,
@@ -231,7 +232,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
         ready: function () {
             var that = this;
             $.get( "./contact.json", function(data){
-                that.gridData = data;
+                that.gridData = data.slice(0,5);
             });
         },
         methods: {
@@ -242,7 +243,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
             editRow: function (recordId){
                 //console.log(recordId);
                 var record = recordId;//this.gridData[recordId]; added comment again
-
+                var id = record.Id;
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
                 var stage = record.StageName!=undefined?record.StageName:"";
@@ -285,6 +286,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                                     title: 'Saved Data',
                                     html: response
                                 })
+                                var n = 0;
+                                var result = $.grep(vm.gridData, function(element,index) {
+                                    if(element.Id == id)
+                                    {
+                                        n=index;
+                                    }
+                                });
+                                vm.gridData[n].FirstName = data.fname;
+                                vm.gridData[n].LastName = data.lname;
+                                vm.gridData[n].StageName = data.stage;
+                                vm.gridData[n]._ProgramInterestedIn0 = data.prog;
+
                             }).fail(function (xhr,statusText,error) {
                                 reject("Error - error code:" + xhr.status);
                             })
