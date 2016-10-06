@@ -183,7 +183,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/sweetalert2/5.1.1/sweetalert2.min.css" type="text/css"/>
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vue/2.0.1/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/sweetalert2/5.1.1/sweetalert2.min.js"></script>
 <script src="scripts.js"></script>
 
@@ -193,22 +193,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
     <table>
         <thead>
         <tr>
-            <th v-for="field in fields" @click="sortBy(field)"  :class="{active: sortField == field}">
-                {{ headerNames[$index] }}
+            <th v-for="(field, index) of fields" @click="sortBy(field)"  :class="{active: sortField == field}">
+                {{ headerNames[index] }}
                 <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
             </th>
             <th>Edit</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="record of gridData | filterBy searchQuery | orderBy sortField order">
+        <tr v-for="record of filteredResults">
             <td v-for="field in fields" :class="{idCell: field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
                 {{record[field]}}
             </td>
-            <td class="editBtn" @click="editRow(record)">Edit</td>
+            <td class="editBtn" @click="editRecord(record)">Edit</td>
         </tr>
         </tbody>
     </table>
+    <pre>{{$data | json }}</pre>
 </div>
 
 
@@ -218,31 +219,55 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
     //var contacts = <?php /*echo json_encode(fetchContacts());*/ ?>
 
     // bootstrap the demo
-    var demo = new Vue({
+    var vm = new Vue({
         el: '#app',
         data: {
             order: 1,
             sortField: 'Id',
             searchQuery: '',
             fields: ['Id', 'FirstName','LastName','StageName','_ProgramInterestedIn0','OwnerName'],
-            gridData: null,
+            gridData: [],
             headerNames: ['Id', 'First Name','Last Name','Stage','Program','Owner']
         },
-        ready: function () {
+        computed:{
+            filteredResults: function () {
+                var searchTerm = this.searchQuery && this.searchQuery.toLowerCase()
+                var sortfield = this.sortField
+                var order = this.order || 1
+                var data = this.gridData
+
+                if(searchTerm)
+                {
+                    data = data.filter(function (row) {
+                        return Object.keys(row).some(function (key) {
+                            return String(row[key]).toLowerCase().indexOf(searchTerm) > -1
+                        })
+                    })
+                }
+                if (sortfield) {
+                    data = data.slice().sort(function (a, b) {
+                        a = a[sortfield]
+                        b = b[sortfield]
+                        return (a === b ? 0 : a > b ? 1 : -1) * order
+                    })
+                }
+                return data
+            }
+        },
+        mounted: function () {
             var that = this;
             $.get( "./contact.json", function(data){
-                that.gridData = data;
+                that.gridData = data.slice(0, 5);
             });
         },
         methods: {
-            sortBy: function (column) {
-                this.sortField = column
+            sortBy: function (field) {
+                this.sortField = field
                 this.order = this.order * -1
             },
-            editRow: function (recordId){
-                //console.log(recordId);
-                var record = recordId;//this.gridData[recordId]; added comment again
-
+            editRecord: function (record){
+                var that = this;
+                var id = record.Id;
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
                 var stage = record.StageName!=undefined?record.StageName:"";
@@ -258,7 +283,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                     '<div class="field"><label for="lname">Last Name</label><input type="text" id="lname" value="'+ lname + '"></div>' +
                     '<div class="field"><label for="stage">Stage</label><input type="text" id="stage" value="'+ stage + '"></div>' +
                     '<div class="field"><label for="prog">Program</label><input type="text" id="prog" value="'+ prog + '"></div>' +
-                    '<div class="field"><label for="owner">Owner</label><input type="text" id="owner" value="'+ owner + '"></div>' +
+                    '<div class="field"><label for="owner">Owner</label><input disabled="disabled" type="text" id="owner" value="'+ owner + '"></div>' +
                     '</form>',
                     showCloseButton: true,
                     showCancelButton: true,
@@ -280,16 +305,36 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                                 url: 'api.php',
                                 data: data
                             }).done(function (response,statusText,xhr) {
-                                swal({
-                                    type: 'success',
-                                    title: 'Saved Data',
-                                    html: response
-                                })
+                                resolve(response);
                             }).fail(function (xhr,statusText,error) {
                                 reject("Error - error code:" + xhr.status);
                             })
                         })
                     }
+                }).then(function (response) {
+                    var data = {};
+                    data.fname = $('#fname').val();
+                    data.lname= $('#lname').val();
+                    data.stage = $('#stage').val();
+                    data.prog = $('#prog').val();
+                    data.owner = $('#owner').val();
+
+                    swal({
+                     type: 'success',
+                     title: 'Saved Data',
+                     html: response
+                     })
+                    var n = 0;
+                    var result = $.grep(vm.gridData, function(element,index) {
+                        if(element.Id == id)
+                        {
+                            n=index;
+                        }
+                    });
+                    vm.gridData[n].FirstName = data.fname;
+                    vm.gridData[n].LastName = data.lname;
+                    vm.gridData[n].StageName = data.stage;
+                    vm.gridData[n]._ProgramInterestedIn0 = data.prog;
                 })
             }
         }
