@@ -22,7 +22,7 @@ table {
 th {
     padding: 10px 5px;
     font-size: 14px;
-    color: rgba(255,255,255,0.66);
+    color: #7c7b7b;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -44,15 +44,15 @@ th.active .arrow {
     opacity: 1;
 }
 
-th.one, td.one{
-    background-color: #99d3df;
+th.one{
+    background-color: #c7d8c6;
 }
 
-th.two, td.two{
-    background-color: #88bbd6;
+th.two{
+    background-color: #efd9c1;
 }
-th.three, td.three{
-    background-color: #cdcdcd;
+th.three{
+    background-color: #b6a19e;
 }
 
 .arrow {

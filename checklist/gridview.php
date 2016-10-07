@@ -1,107 +1,14 @@
 <?php
 include 'global.php';
 
-##################################################
-###     FUNCTIONS TO EXECUTE XML API CALLS     ###
-##################################################
 
-
-function buildXmlCall_query($tableName, $howManyRecords, $pageToReturn, $struct_SearchFields, $array_FieldsToReturn)
+function fetchStages()
 {
-    global $key;
+    //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
+    $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
 
-    //api call to find product, returns an Array
-    $call = new xmlrpcmsg("DataService.query",array(
-        php_xmlrpc_encode($key),
-        php_xmlrpc_encode($tableName), //which table to find from
-        php_xmlrpc_encode($howManyRecords), //how many records
-        php_xmlrpc_encode($pageToReturn), //which page to retrieve, 0 is default
-        php_xmlrpc_encode($struct_SearchFields), //the field(s) to search on
-        php_xmlrpc_encode($array_FieldsToReturn), //the fields to return
-    ));
-    return $call;
-}
-
-function buildXmlCall_Add($tableName,$struct_itemsToAdd)
-{
-    global $key;
-
-    $call = new xmlrpcmsg("DataService.add", array(
-        php_xmlrpc_encode($key),
-        php_xmlrpc_encode($tableName), //which table to add too
-        php_xmlrpc_encode($struct_itemsToAdd),
-    ));
-
-    return $call;
-}
-
-function buildXmlCall_Update($tableName, $rowId, $struct_itemsToUpdate)
-{
-    global $key;
-
-    $call = new xmlrpcmsg("DataService.update", array(
-        php_xmlrpc_encode($key),
-        php_xmlrpc_encode($tableName), //which table to update
-        php_xmlrpc_encode($rowId), //ID of row to update
-        php_xmlrpc_encode($struct_itemsToUpdate),
-    ));
-
-    return $call;
-}
-
-function executeApiCall($xmlCall)
-{
-    global $client;
-    //Send the call
-    $result=$client->send($xmlCall);
-
-    if(!$result->faultCode()) {
-        return $result->value();
-    }
-    else if($result->faultCode()) {
-        /*//if there's an error, write the error message and the xmlcall to a log file
-        $vardump = var_export(php_xmlrpc_decode($xmlCall), true);
-        $filecontents = "INFUSIONSOFT API ERROR MESSAGE: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
-        createErrorLog($filecontents);
-        return "ERROR";*/
-        echo $result->faultString() . "\r\n\r\n" . $xmlCall->method();//remove
-    }
-    else
-    {
-        /*$vardump = var_export(php_xmlrpc_decode($xmlCall), true);
-        $filecontents = "ERROR: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
-        createErrorLog($filecontents);*/
-    }
-}
-
-function createErrorLog($filecontents)
-{
-    $errorfile = fopen("errorlog/error_log_".date("Y-m-d H:i:s").".txt", "w") or die("Unable to open file!");
-    fwrite($errorfile, $filecontents);
-    fclose($errorfile);
-}
-
-function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
-{
-    $page = 0;
-    //$all_records = null;
-
-    while(true)
-    {
-        $call = buildXmlCall_query($table,1000,$page,$struct_SearchFields,$array_FieldsToReturn);
-        $records = executeApiCall($call);
-        //$all_records[] = $records;
-
-        foreach ($records as $v) { //append all elements of current array to main array
-            $all_records[] = $v;
-        }
-        if(count($records) < 1000)
-        {
-            break;
-        }
-        $page++;
-    }
-    return $all_records;
+    $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
+    $stages = executeApiCall($call4);
 }
 
 function fetchContacts()
@@ -111,40 +18,49 @@ function fetchContacts()
 
     $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID');
 
-    $call2 = buildXmlCall_query("User",1000,0,array("Id"=>"%"),array("Id", "FirstName","LastName"));
-    $users = executeApiCall($call2);
+    /*$call2 = buildXmlCall_query("User",1000,0,array("Id"=>"%"),);
+    $users = executeApiCall($call2);*/
+    $users = recursiveFetchData("User",array("Id"=>"%"),array("Id", "FirstName","LastName"));
 
     $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
     $stages = executeApiCall($call4);
 
     $leads = recursiveFetchData("Lead",array('Id'=>'%'),array("Id","StageID","ContactID","UserID"));
+
+    //only get Leads that are in the Stages we want (stages that correspond to $stageIds)
     $filterLeads = null;
     foreach ($stageIds as $sid)
     {
-        $stageKeys = array_keys(array_column($leads,'StageID'), $sid);
-        foreach ($stageKeys as $k) {
-            $filterLeads[] = $leads[$k];
+        $leadsInStage = array_keys(array_column($leads,'StageID'), $sid);
+        foreach ($leadsInStage as $match) {
+            $filterLeads[] = $leads[$match];
         }
     }
 
     $allDBContacts= recursiveFetchData("Contact",array('Id'=>'%'),$contactFields);
+
+    //only get Contacts that are Leads in Infusionsoft
     $filterContacts = null;
     foreach ($allDBContacts as $c)
     {
-        $leadKeys = array_keys(array_column($filterLeads,'ContactID'),$c[Id]);
-        foreach ($leadKeys as $k)
+        $leadsOfContact = array_keys(array_column($filterLeads,'ContactID'),$c[Id]);
+        foreach ($leadsOfContact as $match)
         {
-            $contactArray = $allDBContacts[$k];
+            $contactArray = $allDBContacts[$match];
             $i = array_search($c[Id],array_column($filterLeads,'ContactID'));
             $j = array_search($filterLeads[$i][StageID],array_column($stages,'Id'));
             $n = array_search($contactArray[OwnerID], array_column($users, 'Id'));
 
             $contactArray+=array("StageName"=>$stages[$j]["StageName"]);
+            $contactArray+=array("StageId"=>$stages[$j]["Id"]);
             $contactArray+=array("OwnerName"=>$users[$n][FirstName] . " " . $users[$n][LastName]);
+            $contactArray+=array("OwnerId"=>$users[$n][Id]);
 
             $filterContacts[] = $contactArray; //push this contact into the filtered array
         }
     }
+
+    //sort contacts by last name
     usort($filterContacts, function($a, $b) {
         return strcmp($a["LastName"], $b["LastName"]);
     });
@@ -231,10 +147,14 @@ function fetchContacts()
             }
         },
         mounted: function () {
-            var that = this;
-            $.get( "./contact.json", function(data){
-                that.gridData = data;
-            });
+            $.ajax({
+                type: 'POST',
+                url: './contact.json',
+                data: "query=contacts",
+                success: function (response) {
+                    vm.gridData = response
+                }
+            })
         },
         methods: {
             sortBy: function (field) {
@@ -249,14 +169,6 @@ function fetchContacts()
                 if(index>=4&&index<6){cssClass+=" three";}
                 return cssClass
             },
-            cellClass:function (index,field) {
-                var cssClass="";
-                if(field=='Id'){cssClass+="idCell"}
-                if(index>=0&&index<2){cssClass+=" one";}
-                if(index>=2&&index<4){cssClass+=" two";}
-                if(index>=4&&index<6){cssClass+=" three";}
-                return cssClass
-            },
             editRecord: function (record){
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
@@ -266,13 +178,21 @@ function fetchContacts()
                 //sweet alert modal, which handles the edit form and ajax request to save data
                 swal({
                     title: 'Edit Applicant',
+                    onOpen:function () {
+                        var form = new Vue({
+                            el:'#editForm',
+                            data:{
+                                Testfield:[1,2,3,4,5]
+                            }
+                        })
+                    },
                     html:
                     '<form id="editForm" method="post" action="gridview.php">' +
                     '<div class="field"><label for="fname">First Name</label><input type="text" id="fname" value="'+ fname + '"></div>' +
                     '<div class="field"><label for="lname">Last Name</label><input type="text" id="lname" value="'+ lname + '"></div>' +
                     '<div class="field"><label for="stage">Stage</label><input type="text" id="stage" value="'+ stage + '"></div>' +
                     '<div class="field"><label for="prog">Program</label><input type="text" id="prog" value="'+ prog + '"></div>' +
-                    '<div class="field"><label for="owner">Owner</label><input disabled="disabled" type="text" id="owner" value="'+ owner + '"></div>' +
+                    '<div class="field"><label for="owner">Owner</label><span v-for="n of Testfield">{{ n }}</span></div>' +
                     '</form>',
                     showCloseButton: true,
                     showCancelButton: true,
@@ -280,55 +200,55 @@ function fetchContacts()
                     cancelButtonText:'Cancel',
                     allowOutsideClick:false,
                     allowEscapeKey:false,
-                    showLoaderOnConfirm: true
-                }).then(function () {
-                    var data = {};
-                    data.Id = record.Id;
-                    data.FirstName = $('#fname').val();
-                    data.LastName= $('#lname').val();
-                    data.StageName = $('#stage').val();
-                    data._ProgramInterestedIn0 = $('#prog').val();
-                    data.OwnerName = $('#owner').val();
+                    showLoaderOnConfirm: true,
+                    preConfirm: function () {
+                        return new Promise(function(resolve,reject) {
+                            var data = {};
+                            data.Id = record.Id;
+                            data.FirstName = $('#fname').val();
+                            data.LastName= $('#lname').val();
+                            data.StageName = $('#stage').val();
+                            data._ProgramInterestedIn0 = $('#prog').val();
+                            data.OwnerName = $('#owner').val();
 
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api.php',
-                        data: data
-                    }).done(function (response,statusText,xhr) {
-                        swal({
-                            type: 'success',
-                            title: 'Saved Data',
-                            html: response
+                            $.ajax({
+                                type: 'POST',
+                                url: 'addUpdate.php',
+                                data: data
+                            }).done(function (response,statusText,xhr) {
+                                swal({
+                                    type: 'success',
+                                    title: 'Saved Data',
+                                    html: response
+                                })
+
+                                var n = 0;
+                                var result = $.grep(vm.gridData, function(element,index) {
+                                    if(element.Id == record.Id)
+                                    {
+                                        n=index;
+                                    }
+                                });
+
+                                Vue.set(vm.gridData[n],"FirstName",data.FirstName)
+                                Vue.set(vm.gridData[n],"LastName",data.LastName)
+                                Vue.set(vm.gridData[n],"StageName",data.StageName)
+                                Vue.set(vm.gridData[n],"_ProgramInterestedIn0",data._ProgramInterestedIn0)
+                                //vm.gridData[n].FirstName = data.FirstName;
+
+                                /*Vue.nextTick(function () {});*/
+                                //vm.gridData.splice(n,1);
+                                //vm.gridData.push(data);
+
+                            }).fail(function (xhr,statusText,error) {
+                                swal({
+                                    type:'error',
+                                    title:'Something went wrong!',
+                                    html:'Could not save data. <br> Error code : ' + xhr.status
+                                })
+                            })
                         })
-
-                        var n = 0;
-                        var result = $.grep(vm.gridData, function(element,index) {
-                            if(element.Id == record.Id)
-                            {
-                                n=index;
-                            }
-                        });
-
-                        Vue.set(vm.gridData[n],"FirstName",data.FirstName)
-                        Vue.set(vm.gridData[n],"LastName",data.LastName)
-                        Vue.set(vm.gridData[n],"StageName",data.StageName)
-                        Vue.set(vm.gridData[n],"_ProgramInterestedIn0",data._ProgramInterestedIn0)
-                        //vm.gridData[n].FirstName = data.FirstName;
-
-                        /*Vue.nextTick(function () {
-
-                        });*/
-
-                        //vm.gridData.splice(n,1);
-                        //vm.gridData.push(data);
-
-                    }).fail(function (xhr,statusText,error) {
-                        swal({
-                            type:'error',
-                            title:'Something went wrong!',
-                            html:'Could not save data. <br> Error code : ' + xhr.status
-                        })
-                    })
+                    }
                 })
             }
         }
