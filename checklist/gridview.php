@@ -1,15 +1,10 @@
 <?php
-include("../xmlrpc-2.0/lib/xmlrpc.inc");
-$client = new xmlrpc_client("https://hq171.infusionsoft.com/api/xmlrpc");
-$client->return_type = "phpvals";
-$client->setSSLVerifyPeer(FALSE);
-$key = "1fb3245bda5f2517cf678c1cf28946a1";
-//bgu 1fb3245bda5f2517cf678c1cf28946a1
-//bethanygateway bc29d63e074cb34cceee0df381062c88 - passphrase abc123
+include 'global.php';
 
 ##################################################
 ###     FUNCTIONS TO EXECUTE XML API CALLS     ###
 ##################################################
+
 
 function buildXmlCall_query($tableName, $howManyRecords, $pageToReturn, $struct_SearchFields, $array_FieldsToReturn)
 {
@@ -109,17 +104,6 @@ function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
     return $all_records;
 }
 
-function addUpdateContacts()
-{
-
-    /*$duplicateCheckField = "Email";
-    $call2 = new xmlrpcmsg("ContactService.addWithDupCheck",array(
-        php_xmlrpc_encode($key),
-        php_xmlrpc_encode($array_contact),
-        php_xmlrpc_encode($duplicateCheckField),
-    ));*/
-}
-
 function fetchContacts()
 {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
@@ -168,14 +152,6 @@ function fetchContacts()
     return $filterContacts;
 }
 
-
-if($_SERVER['REQUEST_METHOD'] == 'POST' )
-{
-    $fname = $_POST["fname"];
-    //echo $fname;
-}
-
-
 ?>
 
 
@@ -189,27 +165,27 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
 
 
 <div id="app">
-    Search: <input v-model="searchQuery">
+    <div><input class="searchBox" placeholder="Search" v-model="searchQuery"></div>
     <table>
         <thead>
         <tr>
-            <th v-for="(field, index) of fields" @click="sortBy(field)"  :class="{active: sortField == field}">
+            <th v-for="(field, index) of fields" @click="sortBy(field)"  :class="headerClass(index,field)">
                 {{ headerNames[index] }}
                 <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
             </th>
-            <th>Edit</th>
+            <th class="editHeader">Edit</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="record of filteredResults">
-            <td v-for="field in fields" :class="{idCell: field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
+            <td v-for="(field, index) of fields" :class="{idCell:field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
                 {{record[field]}}
             </td>
             <td class="editBtn" @click="editRecord(record)">Edit</td>
         </tr>
         </tbody>
     </table>
-    <pre>{{$data | json }}</pre>
+    <!--<pre>{{$data | json }}</pre>-->
 </div>
 
 
@@ -257,7 +233,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
         mounted: function () {
             var that = this;
             $.get( "./contact.json", function(data){
-                that.gridData = data.slice(0, 5);
+                that.gridData = data;
             });
         },
         methods: {
@@ -265,15 +241,28 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                 this.sortField = field
                 this.order = this.order * -1
             },
+            headerClass: function (index,field) {
+                var cssClass="";
+                if(this.sortField==field){cssClass+="active";}
+                if(index>=0&&index<2){cssClass+=" one";}
+                if(index>=2&&index<4){cssClass+=" two";}
+                if(index>=4&&index<6){cssClass+=" three";}
+                return cssClass
+            },
+            cellClass:function (index,field) {
+                var cssClass="";
+                if(field=='Id'){cssClass+="idCell"}
+                if(index>=0&&index<2){cssClass+=" one";}
+                if(index>=2&&index<4){cssClass+=" two";}
+                if(index>=4&&index<6){cssClass+=" three";}
+                return cssClass
+            },
             editRecord: function (record){
-                var that = this;
-                var id = record.Id;
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
                 var stage = record.StageName!=undefined?record.StageName:"";
                 var prog = record._ProgramInterestedIn0!=undefined?record._ProgramInterestedIn0:"";
                 var owner = record.OwnerName!=undefined?record.OwnerName:"";
-                that.gridData.$remove(record);
                 //sweet alert modal, which handles the edit form and ajax request to save data
                 swal({
                     title: 'Edit Applicant',
@@ -291,56 +280,55 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' )
                     cancelButtonText:'Cancel',
                     allowOutsideClick:false,
                     allowEscapeKey:false,
-                    showLoaderOnConfirm: true,
-                    preConfirm:function () { //when confirm button is pressed
-                        return new Promise(function (resolve,reject) {
-                            var data = {};
-                            data.fname = $('#fname').val();
-                            data.lname= $('#lname').val();
-                            data.stage = $('#stage').val();
-                            data.prog = $('#prog').val();
-                            data.owner = $('#owner').val();
-                            $.ajax({
-                                type: 'POST',
-                                url: 'api.php',
-                                data: data
-                            }).done(function (response,statusText,xhr) {
-                                resolve(response);
-                                that.gridData.push(data);
-                                swal({
-                                    type: 'success',
-                                    title: 'Saved Data',
-                                    html: response
-                                })
-                            }).fail(function (xhr,statusText,error) {
-                                reject("Error - error code:" + xhr.status);
-                                that.gridData.push(record);
-                                alert("Fail");
-                            })
+                    showLoaderOnConfirm: true
+                }).then(function () {
+                    var data = {};
+                    data.Id = record.Id;
+                    data.FirstName = $('#fname').val();
+                    data.LastName= $('#lname').val();
+                    data.StageName = $('#stage').val();
+                    data._ProgramInterestedIn0 = $('#prog').val();
+                    data.OwnerName = $('#owner').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: 'api.php',
+                        data: data
+                    }).done(function (response,statusText,xhr) {
+                        swal({
+                            type: 'success',
+                            title: 'Saved Data',
+                            html: response
                         })
-                    }
-                }).then(function (response) {
-                    /*var data = {};
-                    data.fname = $('#fname').val();
-                    data.lname= $('#lname').val();
-                    data.stage = $('#stage').val();
-                    data.prog = $('#prog').val();
-                    data.owner = $('#owner').val();*/
 
+                        var n = 0;
+                        var result = $.grep(vm.gridData, function(element,index) {
+                            if(element.Id == record.Id)
+                            {
+                                n=index;
+                            }
+                        });
 
-                    /*var n = 0;
-                    var result = $.grep(vm.gridData, function(element,index) {
-                        if(element.Id == id)
-                        {
-                            n=index;
-                        }
-                    });
+                        Vue.set(vm.gridData[n],"FirstName",data.FirstName)
+                        Vue.set(vm.gridData[n],"LastName",data.LastName)
+                        Vue.set(vm.gridData[n],"StageName",data.StageName)
+                        Vue.set(vm.gridData[n],"_ProgramInterestedIn0",data._ProgramInterestedIn0)
+                        //vm.gridData[n].FirstName = data.FirstName;
 
+                        /*Vue.nextTick(function () {
 
-                    vm.gridData[n].FirstName = data.fname;
-                    vm.gridData[n].LastName = data.lname;
-                    vm.gridData[n].StageName = data.stage;
-                    vm.gridData[n]._ProgramInterestedIn0 = data.prog;*/
+                        });*/
+
+                        //vm.gridData.splice(n,1);
+                        //vm.gridData.push(data);
+
+                    }).fail(function (xhr,statusText,error) {
+                        swal({
+                            type:'error',
+                            title:'Something went wrong!',
+                            html:'Could not save data. <br> Error code : ' + xhr.status
+                        })
+                    })
                 })
             }
         }

@@ -5,15 +5,23 @@ body {
     color: #444;
 }
 
+.searchBox{
+    width: 500px;
+    height: 36px;
+    font-size: 24px;
+    background-color: #f0f2e6;
+    border: 1px solid #cdcdcd;
+    margin: 10px auto;
+    padding: 10px;
+}
+
 table {
-    border: 2px solid #42b983;
-    border-radius: 3px;
     background-color: #fff;
 }
 
 th {
     padding: 10px 5px;
-    background-color: #42b983;
+    font-size: 14px;
     color: rgba(255,255,255,0.66);
     cursor: pointer;
     -webkit-user-select: none;
@@ -22,9 +30,10 @@ th {
 }
 
 td {
-    background-color: #f9f9f9;
     padding: 5px 5px;
-    min-width:120px;
+    min-width:60px;
+    font-size: 12px;
+    background-color: #f7f2f2;
 }
 
 th.active {
@@ -33,6 +42,17 @@ th.active {
 
 th.active .arrow {
     opacity: 1;
+}
+
+th.one, td.one{
+    background-color: #99d3df;
+}
+
+th.two, td.two{
+    background-color: #88bbd6;
+}
+th.three, td.three{
+    background-color: #cdcdcd;
 }
 
 .arrow {
@@ -64,7 +84,10 @@ th.active .arrow {
 {
     text-align: center;
     cursor:pointer;
+    background-color: #cdcdcd;
 }
+
+.editHeader{background-color: #66ab8c;}
 
 .idCell{text-align:center;}
 

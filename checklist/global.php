@@ -8,20 +8,8 @@ $key = "1fb3245bda5f2517cf678c1cf28946a1";
 //bethanygateway bc29d63e074cb34cceee0df381062c88 - passphrase abc123
 
 
-$x = $_POST["FirstName"];
 
-//sleep(5);
-echo "Applicant: " . $x;
 
-function addUpdateContacts()
-{
 
-    /*$duplicateCheckField = "Email";
-    $call2 = new xmlrpcmsg("ContactService.addWithDupCheck",array(
-        php_xmlrpc_encode($key),
-        php_xmlrpc_encode($array_contact),
-        php_xmlrpc_encode($duplicateCheckField),
-    ));*/
-}
 
 ?>
