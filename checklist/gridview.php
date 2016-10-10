@@ -16,15 +16,13 @@
                 {{ headerNames[index] }}
                 <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
             </th>
-            <th class="editHeader">Edit</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="record of filteredResults">
-            <td v-for="(field, index) of displayFields" :class="{idCell:field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
+            <td title="Click To Edit" v-for="(field, index) of displayFields" :class="{idCell:field=='Id'}" @click="editRecord(record)">
                 {{ record[field] }}
             </td>
-            <td class="editBtn" @click="editRecord(record)">Edit</td>
         </tr>
         </tbody>
     </table>
@@ -88,10 +86,10 @@
         mounted: function () {
             $.ajax({
                 type: 'POST',
-                url: 'api.php', //./contact.json
+                url: './contact.json', //./contact.json
                 data: "query=getContacts"
             }).done(function (response) {
-                var contactdata = JSON.parse(response)// JSON.parse(response)
+                var contactdata = response// JSON.parse(response)
                 vm.gridData = contactdata
                 //console.log(vm.gridData)
             }).fail(function (xhr, statusText, error) {
@@ -127,7 +125,7 @@
                 if(this.sortField==field){cssClass+=" active";}
                 if(index>=0&&index<6){cssClass+=" one";}
                 if(index>=6&&index<12){cssClass+=" two";}
-                if(index>=12&&index<22){cssClass+=" three";}
+                if(index>=12&&index<23){cssClass+=" three";}
                 return cssClass
             },
             editRecord: function (record){
