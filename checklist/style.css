@@ -102,7 +102,7 @@ th.three{
     float:left;
 }
 
-.field input
+.field input, .field select
 {
     float:right;
     width: 70%;

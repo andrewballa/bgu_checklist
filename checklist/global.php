@@ -1,5 +1,9 @@
 <?php
 include("../xmlrpc-2.0/lib/xmlrpc.inc");
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
 $client = new xmlrpc_client("https://hq171.infusionsoft.com/api/xmlrpc");
 $client->return_type = "phpvals";
 $client->setSSLVerifyPeer(FALSE);
@@ -7,11 +11,34 @@ $key = "1fb3245bda5f2517cf678c1cf28946a1";
 //bgu 1fb3245bda5f2517cf678c1cf28946a1
 //bethanygateway bc29d63e074cb34cceee0df381062c88 - passphrase abc123
 
-
 ##################################################
 ###     FUNCTIONS TO EXECUTE XML API CALLS     ###
 ##################################################
 
+function executeApiCall($xmlCall)
+{
+    global $client;
+    //Send the call
+    $result=$client->send($xmlCall);
+
+    if(!$result->faultCode()) {
+        return $result->value();
+    }
+    else if($result->faultCode()) {
+        /*//if there's an error, write the error message and the xmlcall to a log file
+        $vardump = var_export(php_xmlrpc_decode($xmlCall), true);
+        $filecontents = "INFUSIONSOFT API ERROR MESSAGE: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
+        createErrorLog($filecontents);
+        return "ERROR";*/
+        echo $result->faultString() . "\r\n\r\n" . $xmlCall->method();//remove
+    }
+    else
+    {
+        /*$vardump = var_export(php_xmlrpc_decode($xmlCall), true);
+        $filecontents = "ERROR: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
+        createErrorLog($filecontents);*/
+    }
+}
 
 function buildXmlCall_query($tableName, $howManyRecords, $pageToReturn, $struct_SearchFields, $array_FieldsToReturn)
 {
@@ -77,6 +104,7 @@ function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
         foreach ($records as $v) { //append all elements of current array to main array
             $all_records[] = $v;
         }
+
         if(count($records) < 1000)
         {
             break;
@@ -84,31 +112,6 @@ function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
         $page++;
     }
     return $all_records;
-}
-
-function executeApiCall($xmlCall)
-{
-    global $client;
-    //Send the call
-    $result=$client->send($xmlCall);
-
-    if(!$result->faultCode()) {
-        return $result->value();
-    }
-    else if($result->faultCode()) {
-        /*//if there's an error, write the error message and the xmlcall to a log file
-        $vardump = var_export(php_xmlrpc_decode($xmlCall), true);
-        $filecontents = "INFUSIONSOFT API ERROR MESSAGE: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
-        createErrorLog($filecontents);
-        return "ERROR";*/
-        echo $result->faultString() . "\r\n\r\n" . $xmlCall->method();//remove
-    }
-    else
-    {
-        /*$vardump = var_export(php_xmlrpc_decode($xmlCall), true);
-        $filecontents = "ERROR: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
-        createErrorLog($filecontents);*/
-    }
 }
 
 

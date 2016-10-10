@@ -1,72 +1,98 @@
 <?php
 include 'global.php';
 
+//get all contacts from Infusionsoft
 
-function fetchStages()
+function getContacts()
 {
-    //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
-    $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
-
-    $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
-    $stages = executeApiCall($call4);
+    $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID','_PaidAppFee','_PersonalReference','_PasterReferenceReceived',
+        '_HighSchoolTranscriptReceived','_MostRecentCollegeTranscriptsReceived','_CollegeTranscript2Received','_College3TranscriptsReceived','_PaidRoomDeposit0',
+        '_EnrolledInClasses0','_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire','_SentArrivalInformation0','_FilledOutImmunizationForm0',
+        '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional','_SentEmergencyContactInformation','_JoinedFacebook');
+    $allDBContacts= recursiveFetchData("Contact",array('FirstName'=>'%'),$contactFields);
+    return $allDBContacts;
 }
 
-function fetchContacts()
+function getStages()
 {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
     $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
 
-    $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID');
-
-    /*$call2 = buildXmlCall_query("User",1000,0,array("Id"=>"%"),);
-    $users = executeApiCall($call2);*/
-    $users = recursiveFetchData("User",array("Id"=>"%"),array("Id", "FirstName","LastName"));
-
     $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
     $stages = executeApiCall($call4);
 
-    $leads = recursiveFetchData("Lead",array('Id'=>'%'),array("Id","StageID","ContactID","UserID"));
-
-    //only get Leads that are in the Stages we want (stages that correspond to $stageIds)
-    $filterLeads = null;
-    foreach ($stageIds as $sid)
+    $filterStages = null;
+    foreach($stageIds as $id)
     {
-        $leadsInStage = array_keys(array_column($leads,'StageID'), $sid);
-        foreach ($leadsInStage as $match) {
-            $filterLeads[] = $leads[$match];
-        }
-    }
-
-    //get all contacts from Infusionsoft
-    $allDBContacts= recursiveFetchData("Contact",array('Id'=>'%'),$contactFields);
-
-    //only get Contacts that are Leads in Infusionsoft
-    $filterContacts = null;
-    foreach ($allDBContacts as $c)
-    {
-        $leadsOfContact = array_keys(array_column($filterLeads,'ContactID'),$c[Id]);
-        foreach ($leadsOfContact as $match)
+        $keys = array_keys(array_column($stages,'Id'),$id);
+        foreach($keys as $k)
         {
-            $contactArray = $allDBContacts[$match];
-            $i = array_search($c[Id],array_column($filterLeads,'ContactID'));
-            $j = array_search($filterLeads[$i][StageID],array_column($stages,'Id'));
-            $n = array_search($contactArray[OwnerID], array_column($users, 'Id'));
-
-            $contactArray+=array("StageName"=>$stages[$j]["StageName"]);
-            $contactArray+=array("StageId"=>$stages[$j]["Id"]);
-            $contactArray+=array("OwnerName"=>$users[$n][FirstName] . " " . $users[$n][LastName]);
-            $contactArray+=array("OwnerId"=>$users[$n][Id]);
-
-            $filterContacts[] = $contactArray; //push this contact into the filtered array
+            $filterStages[] = $stages[$k];
         }
     }
 
-    //sort contacts by last name
-    usort($filterContacts, function($a, $b) {
-        return strcmp($a["LastName"], $b["LastName"]);
+    usort($filterStages, function($a, $b) {
+        //if($a["LastName"]!=null & $b["LastName"]!=null) {
+        return strcmp($a['StageName'], $b['StageName']);
+        //}
     });
 
-    echo $filterContacts;
+    return $filterStages;
+}
+
+function getUsers()
+{
+    $users = recursiveFetchData("User",array("Id"=>"%"),array("Id", "FirstName","LastName"));
+    return $users;
+}
+
+function createContactsArray()
+{
+    $contacts = getContacts();
+    $stages = getStages();
+    $users = getUsers();
+    $leads = recursiveFetchData("Lead",array('Id'=>'%'),array("Id","StageID","ContactID","UserID"));
+
+    //filter only the Leads that are in the Stages we want (stages that correspond to $stageIds)
+    $filteredLeads = null;
+    foreach ($stages as $s)
+    {
+        $leadsInStage = array_keys(array_column($leads,'StageID'), $s['Id']);
+        foreach ($leadsInStage as $l) {
+            $filteredLeads[] = $leads[$l];
+        }
+    }
+
+    //echo "all cons" . count($allDBContacts) . '<br>';
+    //filter only the Contacts that are Leads in Infusionsoft
+    $filteredContactArray = null;
+    foreach ($contacts as $c)
+    {
+        $contactLeads = array_keys(array_column($filteredLeads,'ContactID'),$c['Id']);
+        foreach ($contactLeads as $lead)
+        {
+            $contactRecord = $contacts[$lead];
+            $i = array_search($c['Id'],array_column($filteredLeads,'ContactID'));
+            $j = array_search($filteredLeads[$i]['StageID'],array_column($stages,'Id'));
+            $n = array_search($contactRecord['OwnerID'], array_column($users, 'Id'));
+
+            $contactRecord+=array("StageName"=>$stages[$j]["StageName"]);
+            $contactRecord+=array("StageId"=>$stages[$j]["Id"]);
+            $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
+            $contactRecord+=array("OwnerId"=>$users[$n]['Id']);
+
+            $filteredContactArray[] = $contactRecord; //push this contact into the filtered array
+        }
+    }
+
+    //echo "filtered cons" . count($filteredContacts) . '<br>';
+
+    //sort contacts by last name
+        usort($filteredContactArray, function($a, $b) {
+            return strcmp($a['LastName'], $b['LastName']);
+        });
+
+    return $filteredContactArray;
 }
 
 function addUpdateContacts()
@@ -94,6 +120,27 @@ function addUpdateContacts()
     }
 }
 
-fetchContacts();
+//$time_start = microtime(true);
+//$time_end = microtime(true);
+//echo $time_end - $time_start;
+
+
+if(isset($_REQUEST['query']))
+{
+    if($_REQUEST['query']=="getContacts") {
+        echo json_encode(createContactsArray());
+    }
+    if($_REQUEST['query']=="getStages") {
+        echo json_encode(getStages());
+    }
+    if($_REQUEST['query']=="getUsers") {
+        echo json_encode(getUsers());
+    }
+    if($_REQUEST['query']=="saveContact") {
+        $fname = $_REQUEST["StageId"];
+        echo "Saved Applicant: " . $fname;
+    }
+
+}
 
 ?>

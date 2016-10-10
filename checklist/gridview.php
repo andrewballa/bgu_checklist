@@ -1,76 +1,3 @@
-<?php
-include 'global.php';
-
-
-function fetchStages()
-{
-    //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
-    $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
-
-    $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
-    $stages = executeApiCall($call4);
-}
-
-function fetchContacts()
-{
-    //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
-    $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
-
-    $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID');
-
-    /*$call2 = buildXmlCall_query("User",1000,0,array("Id"=>"%"),);
-    $users = executeApiCall($call2);*/
-    $users = recursiveFetchData("User",array("Id"=>"%"),array("Id", "FirstName","LastName"));
-
-    $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
-    $stages = executeApiCall($call4);
-
-    $leads = recursiveFetchData("Lead",array('Id'=>'%'),array("Id","StageID","ContactID","UserID"));
-
-    //only get Leads that are in the Stages we want (stages that correspond to $stageIds)
-    $filterLeads = null;
-    foreach ($stageIds as $sid)
-    {
-        $leadsInStage = array_keys(array_column($leads,'StageID'), $sid);
-        foreach ($leadsInStage as $match) {
-            $filterLeads[] = $leads[$match];
-        }
-    }
-
-    $allDBContacts= recursiveFetchData("Contact",array('Id'=>'%'),$contactFields);
-
-    //only get Contacts that are Leads in Infusionsoft
-    $filterContacts = null;
-    foreach ($allDBContacts as $c)
-    {
-        $leadsOfContact = array_keys(array_column($filterLeads,'ContactID'),$c[Id]);
-        foreach ($leadsOfContact as $match)
-        {
-            $contactArray = $allDBContacts[$match];
-            $i = array_search($c[Id],array_column($filterLeads,'ContactID'));
-            $j = array_search($filterLeads[$i][StageID],array_column($stages,'Id'));
-            $n = array_search($contactArray[OwnerID], array_column($users, 'Id'));
-
-            $contactArray+=array("StageName"=>$stages[$j]["StageName"]);
-            $contactArray+=array("StageId"=>$stages[$j]["Id"]);
-            $contactArray+=array("OwnerName"=>$users[$n][FirstName] . " " . $users[$n][LastName]);
-            $contactArray+=array("OwnerId"=>$users[$n][Id]);
-
-            $filterContacts[] = $contactArray; //push this contact into the filtered array
-        }
-    }
-
-    //sort contacts by last name
-    usort($filterContacts, function($a, $b) {
-        return strcmp($a["LastName"], $b["LastName"]);
-    });
-
-    return $filterContacts;
-}
-
-?>
-
-
 <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/sweetalert2/5.1.1/sweetalert2.min.css" type="text/css"/>
 
@@ -85,7 +12,7 @@ function fetchContacts()
     <table>
         <thead>
         <tr>
-            <th v-for="(field, index) of fields" @click="sortBy(field)"  :class="headerClass(index,field)">
+            <th v-for="(field, index) of displayFields" @click="sortBy(field)"  :class="headerClass(index,field)">
                 {{ headerNames[index] }}
                 <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
             </th>
@@ -94,8 +21,8 @@ function fetchContacts()
         </thead>
         <tbody>
         <tr v-for="record of filteredResults">
-            <td v-for="(field, index) of fields" :class="{idCell:field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
-                {{record[field]}}
+            <td v-for="(field, index) of displayFields" :class="{idCell:field=='Id'}" :data-ownerid="field=='OwnerName' ? record[field] : ''">
+                {{ record[field] }}
             </td>
             <td class="editBtn" @click="editRecord(record)">Edit</td>
         </tr>
@@ -108,18 +35,26 @@ function fetchContacts()
 
 
 <script>
-    //var contacts = <?php /*echo json_encode(fetchContacts());*/ ?>
+    var applicantStages;
+    var owners;
 
-    // bootstrap the demo
+    // bootstrap the Vue app
     var vm = new Vue({
         el: '#app',
         data: {
             order: 1,
-            sortField: 'Id',
+            sortField: 'LastName',
             searchQuery: '',
-            fields: ['Id', 'FirstName','LastName','StageName','_ProgramInterestedIn0','OwnerName'],
+            fields: ['FirstName','LastName','StageName','_ProgramInterestedIn0','OwnerName','_PaidAppFee','_PersonalReference',
+                '_PasterReferenceReceived','_HighSchoolTranscriptReceived','_MostRecentCollegeTranscriptsReceived','_CollegeTranscript2Received',
+                '_College3TranscriptsReceived','_PaidRoomDeposit0','_EnrolledInClasses0','_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
+                '_SentArrivalInformation0','_FilledOutImmunizationForm0','_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional'
+                ,'_SentEmergencyContactInformation','_JoinedFacebook','StageId','OwnerId','Id'],
+
             gridData: [],
-            headerNames: ['Id', 'First Name','Last Name','Stage','Program','Owner']
+            headerNames: ['First Name','Last Name','Stage','Program','Owner','Paid App Fee','Personal Ref','Pastor Ref','HS Transcript','Clg Transcript 1','Clg Transcript 2',
+                'Clg Transcript 3','Room Deposit','Enrolled In Classes','PT Questionnaire','Roommate Questionnaire','Arrival Form','Immunization Form','Applied to FAFSA',
+                'VFAO Interview','Applied to Student Loans','Emergency Contact Form','Joined Facebook Group']
         },
         computed:{
             filteredResults: function () {
@@ -144,55 +79,100 @@ function fetchContacts()
                     })
                 }
                 return data
+            },
+            displayFields: function() {
+                //remove as many fields from the "fields" variable that you dont want displayed
+                return this.fields.slice(0,this.fields.length-3)
             }
         },
         mounted: function () {
             $.ajax({
                 type: 'POST',
-                url: './contact.json',
-                data: "query=contacts",
-                success: function (response) {
-                    vm.gridData = response
-                }
+                url: 'api.php', //./contact.json
+                data: "query=getContacts"
+            }).done(function (response) {
+                var contactdata = JSON.parse(response)// JSON.parse(response)
+                vm.gridData = contactdata
+                //console.log(vm.gridData)
+            }).fail(function (xhr, statusText, error) {
+                console.log(error)
+            })
+
+            $.ajax({
+                type: 'POST',
+                url: 'api.php', //./contact.json
+                data: "query=getStages"
+            }).done(function (response) {
+                applicantStages = JSON.parse(response)
+            })
+
+            $.ajax({
+                type: 'POST',
+                url: 'api.php', //./contact.json
+                data: "query=getUsers"
+            }).done(function (response) {
+                owners = JSON.parse(response)
             })
         },
         methods: {
+            showField:function (field) {
+                if(field!="StageId" && field!="OwnerId" && field!="Id") return field
+            },
             sortBy: function (field) {
                 this.sortField = field
                 this.order = this.order * -1
             },
             headerClass: function (index,field) {
                 var cssClass="";
-                if(this.sortField==field){cssClass+="active";}
-                if(index>=0&&index<2){cssClass+=" one";}
-                if(index>=2&&index<4){cssClass+=" two";}
-                if(index>=4&&index<6){cssClass+=" three";}
+                if(this.sortField==field){cssClass+=" active";}
+                if(index>=0&&index<6){cssClass+=" one";}
+                if(index>=6&&index<12){cssClass+=" two";}
+                if(index>=12&&index<22){cssClass+=" three";}
                 return cssClass
             },
             editRecord: function (record){
                 var fname = record.FirstName!=undefined?record.FirstName:"";
                 var lname = record.LastName!=undefined?record.LastName:"";
                 var stage = record.StageName!=undefined?record.StageName:"";
+                var stageId = record.StageId!=undefined?record.StageId:"";
                 var prog = record._ProgramInterestedIn0!=undefined?record._ProgramInterestedIn0:"";
                 var owner = record.OwnerName!=undefined?record.OwnerName:"";
+                var ownerId = record.OwnerId!=undefined?record.OwnerId:"";
                 //sweet alert modal, which handles the edit form and ajax request to save data
                 swal({
                     title: 'Edit Applicant',
                     onOpen:function () {
-                        var form = new Vue({
+                        var formVm = new Vue({
                             el:'#editForm',
                             data:{
-                                Testfield:[1,2,3,4,5]
+                                stages: applicantStages,
+                                stageId: stageId,
+                                owners: owners,
+                                ownerId: ownerId
+                            },
+                            methods:{
+                                stageSelected:function (id) {
+                                    if(this.stageId == id || id==0)return "selected"
+                                },
+                                ownerSelected:function (id) {
+                                    if(this.ownerId == id || id==0)return "selected"
+                                }
                             }
-                        })
+                        });
                     },
                     html:
                     '<form id="editForm" method="post" action="gridview.php">' +
-                    '<div class="field"><label for="fname">First Name</label><input type="text" id="fname" value="'+ fname + '"></div>' +
-                    '<div class="field"><label for="lname">Last Name</label><input type="text" id="lname" value="'+ lname + '"></div>' +
-                    '<div class="field"><label for="stage">Stage</label><input type="text" id="stage" value="'+ stage + '"></div>' +
-                    '<div class="field"><label for="prog">Program</label><input type="text" id="prog" value="'+ prog + '"></div>' +
-                    '<div class="field"><label for="owner">Owner</label><span v-for="n of Testfield">{{ n }}</span></div>' +
+                        '<div class="field"><label for="fname">First Name</label><input type="text" id="fname" value="'+ fname + '"></div>' +
+                        '<div class="field"><label for="lname">Last Name</label><input type="text" id="lname" value="'+ lname + '"></div>' +
+                        '<div class="field"><label for="stage">Stage</label><select id="stage">'+
+                            '<option :selected="stageSelected(0)" value="unselected">Select One...</option>' +
+                            '<option :selected="stageSelected(n.Id)" v-for="n of stages" :value="n.Id">{{ n.StageName }}</option>' +
+                    '   </select></div>' +
+                        '<div class="field"><label for="prog">Program</label><input type="text" id="prog" value="'+ prog + '"></div>' +
+                        '<div class="field"><label for="owner">Owner</label><select id="owner">' +
+                            '<option :selected="ownerSelected(0)" value="unselected">Select One...</option>'+
+                            '<option :selected="ownerSelected(n.Id)" v-for="n of owners" :value="n.Id">{{n.FirstName}} {{n.LastName}} </option>' +
+                        '</select></div>' +
                     '</form>',
                     showCloseButton: true,
                     showCancelButton: true,
@@ -207,20 +187,32 @@ function fetchContacts()
                             data.Id = record.Id;
                             data.FirstName = $('#fname').val();
                             data.LastName= $('#lname').val();
-                            data.StageName = $('#stage').val();
                             data._ProgramInterestedIn0 = $('#prog').val();
-                            data.OwnerName = $('#owner').val();
+                            data.query = "saveContact";
+
+                            var stageVal = $("#stage").val();
+
+                            if(stageVal!="unselected") {
+                                data.StageId = stageVal;
+                                data.StageName = $("#stage option:selected").text();
+                            }
+
+                            var ownerVal = $("#owner").val();
+                            if(ownerVal!="unselected") {
+                                data.OwnerId = ownerVal;
+                                data.OwnerName = $("#owner option:selected").text()
+                            }
 
                             $.ajax({
                                 type: 'POST',
-                                url: 'addUpdate.php',
+                                url: 'api.php',
                                 data: data
-                            }).done(function (response,statusText,xhr) {
+                            }).done(function (response) {
                                 swal({
                                     type: 'success',
                                     title: 'Saved Data',
                                     html: response
-                                })
+                                }).done()
 
                                 var n = 0;
                                 var result = $.grep(vm.gridData, function(element,index) {
@@ -233,12 +225,10 @@ function fetchContacts()
                                 Vue.set(vm.gridData[n],"FirstName",data.FirstName)
                                 Vue.set(vm.gridData[n],"LastName",data.LastName)
                                 Vue.set(vm.gridData[n],"StageName",data.StageName)
+                                Vue.set(vm.gridData[n],"StageId",data.StageId)
                                 Vue.set(vm.gridData[n],"_ProgramInterestedIn0",data._ProgramInterestedIn0)
-                                //vm.gridData[n].FirstName = data.FirstName;
-
-                                /*Vue.nextTick(function () {});*/
-                                //vm.gridData.splice(n,1);
-                                //vm.gridData.push(data);
+                                Vue.set(vm.gridData[n],"OwnerName",data.OwnerName)
+                                Vue.set(vm.gridData[n],"OwnerId",data.OwnerId)
 
                             }).fail(function (xhr,statusText,error) {
                                 swal({
@@ -249,7 +239,7 @@ function fetchContacts()
                             })
                         })
                     }
-                })
+                }).done()
             }
         }
     })
