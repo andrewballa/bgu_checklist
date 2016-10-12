@@ -1,3 +1,15 @@
+function getRecordIndex(array,recordId)
+{
+    var n = 0;
+    var result = $.grep(array, function(element,index) {
+        if(element.Id == recordId)
+        {
+            n=index;
+        }
+    });
+    return n;
+}
+
 function contactSave(record,vm) {
     /*['FirstName', 'LastName', 'StageName', '_ProgramInterestedIn0', 'OwnerName', '_PaidAppFee', '_PersonalReference',
         '_PasterReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
@@ -5,10 +17,18 @@ function contactSave(record,vm) {
         '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_AppliedforStudentLoansoptional'
         , '_SentEmergencyContactInformation', '_JoinedFacebook', 'StageId', 'OwnerId', 'Id']*/
     var contact = {};
-    contact.contactId = record.Id;
+    var recordFields = Object.keys(record);
+    console.log(recordFields)
+    for(var j=0; j<recordFields.length ;j++)
+    {
+        var field = recordFields[j];
+        contact.field = record[field];
+    }
+
+   /* contact.contactId = record.Id;
     contact.FirstName = $('#fname').val();
     contact.LastName= $('#lname').val();
-    contact._ProgramInterestedIn0 = $('#prog').val();
+    contact._ProgramInterestedIn0 = $('#prog').val();*/
 
     contact.query = "saveContact";
 
@@ -28,7 +48,7 @@ function contactSave(record,vm) {
     $.ajax({
         type: 'POST',
         url: 'api.php',
-        data: contact
+        data: "" //contact
     }).done(function (response) {
         swal({
             type: 'success',
@@ -36,30 +56,16 @@ function contactSave(record,vm) {
             html: response
         }).done()
 
-        var n = 0;
-        var result = $.grep(vm.gridData, function(element,index) {
-            if(element.Id == record.Id)
-            {
-                n=index;
-            }
-        });
+        var n = getRecordIndex(vm.gridData,record.Id)
 
         var contactFields = Object.keys(contact);
-        //console.log(contactFields)
 
+        //Vue.set(vm.gridData[n],"FirstName",data.FirstName)
         for(var i=0; i<contactFields.length ;i++)
         {
             var fieldName = contactFields[i]
             Vue.set(vm.gridData[n],fieldName,contact[fieldName])
         }
-
-        /*Vue.set(vm.gridData[n],"FirstName",data.FirstName)
-        Vue.set(vm.gridData[n],"LastName",data.LastName)
-        Vue.set(vm.gridData[n],"StageName",data.StageName)
-        Vue.set(vm.gridData[n],"StageId",data.StageId)
-        Vue.set(vm.gridData[n],"_ProgramInterestedIn0",data._ProgramInterestedIn0)
-        Vue.set(vm.gridData[n],"OwnerName",data.OwnerName)
-        Vue.set(vm.gridData[n],"OwnerId",data.OwnerId)*/
 
     }).fail(function (xhr,statusText,error) {
         swal({

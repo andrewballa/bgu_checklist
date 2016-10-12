@@ -71,23 +71,27 @@ function createContactsArray()
     //echo "all cons" . count($allDBContacts) . '<br>';
     //filter only the Contacts that are Leads in Infusionsoft
     $filteredContactArray = null;
-    foreach ($contacts as $c)
-    {
-        $contactLeads = array_keys(array_column($filteredLeads,'ContactID'),$c['Id']);
-        foreach ($contactLeads as $lead)
-        {
-            $contactRecord = $contacts[$lead];
-            //$i = array_search($c['Id'],array_column($filteredLeads,'ContactID'));
-            $j = array_search($lead['StageID'],array_column($stages,'Id'));
-            $n = array_search($contactRecord['OwnerID'], array_column($users, 'Id'));
+    $cIdArray = array_column($filteredLeads,'ContactID');
 
-            $contactRecord+=array("StageName"=>$stages[$j]["StageName"]);
-            $contactRecord+=array("StageId"=>$stages[$j]["Id"]);
-            $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
-            $contactRecord+=array("OwnerId"=>$users[$n]['Id']);
-            
-            $filteredContactArray[] = $contactRecord; //push this contact into the filtered array
-        }
+    foreach ($cIdArray as $cId)
+    {
+        $e= array_search($cId,array_column($contacts,'Id'));
+        $contactRecord = $contacts[$e];
+
+        $r = array_search($cId,array_column($filteredLeads,'ContactID'));
+        $lead = $filteredLeads[$r];
+
+        $j = array_search($lead['StageID'],array_column($stages,'Id'));
+        $contactRecord+=array("StageName"=>$stages[$j]["StageName"]);
+        $contactRecord+=array("StageId"=>$stages[$j]["Id"]);
+
+
+        $n = array_search($contactRecord['OwnerID'], array_column($users, 'Id'));
+        $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
+        $contactRecord+=array("OwnerId"=>$contactRecord['OwnerID']);
+
+        $filteredContactArray[] = $contactRecord; //push this contact into the filtered array
+
     }
 
     //echo "filtered cons" . count($filteredContacts) . '<br>';
@@ -147,7 +151,10 @@ function updateContact()
 if(isset($_REQUEST['query']))
 {
     if($_REQUEST['query']=="getContacts") {
+        //$time_start = microtime(true);
         echo json_encode(createContactsArray());
+        //$time_end = microtime(true);
+        //echo $time_end - $time_start;
     }
     if($_REQUEST['query']=="getStages") {
         echo json_encode(getStages());

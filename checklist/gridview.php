@@ -1,10 +1,11 @@
-<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/sweetalert2/5.1.1/sweetalert2.min.css" type="text/css"/>
+<!--replace these dev libraries with prod versions-->
+<link rel="stylesheet" href="scripts/style.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="scripts/sweetalert/sweetalert2.css" type="text/css"/>
 
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/vue/2.0.1/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/sweetalert2/5.1.1/sweetalert2.min.js"></script>
-<script src="scripts.js"></script>
+<script src="scripts/jquery/jquery-3.1.1.js"></script>
+<script src="scripts/vue/vue2.js"></script>
+<script src="scripts/sweetalert/sweetalert2.js"></script>
+<script src="scripts/global.js"></script>
 
 <div id="test"></div>
 
@@ -21,7 +22,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="record of filteredResults">
+        <tr v-for="(record,x) of filteredResults">
             <td title="Click To Edit" v-for="(field, index) of displayFields" :class="{idCell:field=='Id'}" @click="editRecord(record)">
                 {{ record[field] }}
             </td>
@@ -120,7 +121,7 @@
                             //get the contact data from the API
                             $.ajax({
                                 type: 'POST',
-                                url: './contact.json', //./contact.json
+                                url: './test_data/contact.json', // ./test_data/contact.json
                                 data: "query=getContacts"
                             }).done(function (response) {
                                 var contactdata = response// JSON.parse(response)
@@ -172,12 +173,8 @@
                                 return cssClass
                             },
                             editRecord: function (record) {
-                                var fname = record.FirstName != undefined ? record.FirstName : "";
-                                var lname = record.LastName != undefined ? record.LastName : "";
-                                var stage = record.StageName != undefined ? record.StageName : "";
-                                var stageId = record.StageId != undefined ? record.StageId : "";
-                                var prog = record._ProgramInterestedIn0 != undefined ? record._ProgramInterestedIn0 : "";
-                                var owner = record.OwnerName != undefined ? record.OwnerName : "";
+
+                                var n = getRecordIndex(vm.gridData,record.Id)
                                 var ownerId = record.OwnerId != undefined ? record.OwnerId : "";
                                 //sweet alert modal, which handles the edit form and ajax request to save data
                                 swal({
@@ -187,9 +184,11 @@
                                             el: '#editForm',
                                             data: {
                                                 stages: applicantStages,
-                                                stageId: stageId,
+                                                stageId: record.StageID,
                                                 owners: owners,
-                                                ownerId: ownerId
+                                                ownerId: record.OwnerId,
+                                                gridData: vm.gridData,
+                                                r:n
                                             },
                                             methods: {
                                                 stageSelected: function (id) {
@@ -203,14 +202,14 @@
                                     },
                                     html:
                                     '<form id="editForm" method="post" action="gridview.php">' +
-                                        '<div class="field"><label for="fname">First Name</label><input type="text" id="fname" value="' + fname + '"></div>' +
-                                        '<div class="field"><label for="lname">Last Name</label><input type="text" id="lname" value="' + lname + '"></div>' +
-                                        '<div class="field"><label for="stage">Stage</label><select id="stage">' +
+                                        '<div class="field"><label>First Name</label><input type="text" id="fname" :value="gridData[r].FirstName"></div>' +
+                                        '<div class="field"><label>Last Name</label><input type="text" id="lname" :value="gridData[r].LastName"></div>' +
+                                        '<div class="field"><label>Stage</label><select id="stage">' +
                                             '<option :selected="stageSelected(0)" value="unselected">Select One...</option>' +
                                             '<option :selected="stageSelected(n.Id)" v-for="n of stages" :value="n.Id">{{ n.StageName }}</option>' +
                                         '</select></div>' +
-                                        '<div class="field"><label for="prog">Program</label><input type="text" id="prog" value="' + prog + '"></div>' +
-                                        '<div class="field"><label for="owner">Owner</label><select id="owner">' +
+                                        '<div class="field"><label>Program</label><input type="text" id="prog" :value="gridData[r]._ProgramInterestedIn0"></div>' +
+                                        '<div class="field"><label>Owner</label><select id="owner">' +
                                             '<option :selected="ownerSelected(0)" value="unselected">Select One...</option>' +
                                             '<option :selected="ownerSelected(n.Id)" v-for="n of owners" :value="n.Id">{{n.FirstName}} {{n.LastName}} </option>' +
                                         '</select></div>'+
