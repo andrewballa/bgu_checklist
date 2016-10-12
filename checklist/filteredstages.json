@@ -1,0 +1,91 @@
+array('39', '41', '43', '45', '51','57', '59', '61', '63', '65','80', '82', '84', '86', '88','98', '100', '102', '104', '106','108', '110' )
+[
+  {
+    "StageName": "BGU - New Applicant",
+    "Id": 39
+  },
+  {
+    "StageName": "BGU - Accepted Applicant",
+    "Id": 41
+  },
+  {
+    "StageName": "BGU - Accepted  Paid Applicant",
+    "Id": 43
+  },
+  {
+    "StageName": "BGU - Enrolled",
+    "Id": 45
+  },
+  {
+    "StageName": "BGU - Applicant",
+    "Id": 51
+  },
+  {
+    "StageName": "LEAD - New Applicant",
+    "Id": 57
+  },
+  {
+    "StageName": "LEAD - Applicant",
+    "Id": 59
+  },
+  {
+    "StageName": "LEAD - Accepted Applicant",
+    "Id": 61
+  },
+  {
+    "StageName": "LEAD - Accepted Paid Applicant",
+    "Id": 63
+  },
+  {
+    "StageName": "LEAD - Enrolled",
+    "Id": 65
+  },
+  {
+    "StageName": "GS - New Applicant",
+    "Id": 80
+  },
+  {
+    "StageName": "GS - Applicant",
+    "Id": 82
+  },
+  {
+    "StageName": "GS - Accepted Applicant",
+    "Id": 84
+  },
+  {
+    "StageName": "GS - Accepted Paid Applicant",
+    "Id": 86
+  },
+  {
+    "StageName": "GS - Student",
+    "Id": 88
+  },
+  {
+    "StageName": "BGU - Applicant Complete",
+    "Id": 98
+  },
+  {
+    "StageName": "LEAD - Applicant Complete",
+    "Id": 100
+  },
+  {
+    "StageName": "GS - Applicant Complete",
+    "Id": 102
+  },
+  {
+    "StageName": "GS - Enrolled",
+    "Id": 104
+  },
+  {
+    "StageName": "BGU - New Accepted Applicant",
+    "Id": 106
+  },
+  {
+    "StageName": "LEAD - New Accepted Applicant",
+    "Id": 108
+  },
+  {
+    "StageName": "GS - New Accepted Applicant",
+    "Id": 110
+  }
+]
