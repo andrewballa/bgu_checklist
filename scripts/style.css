@@ -1,0 +1,142 @@
+
+body {
+    font-family: Helvetica Neue, Arial, sans-serif;
+    font-size: 14px;
+    color: #444;
+}
+
+.searchBox{
+    width: 500px;
+    height: 36px;
+    font-size: 24px;
+    background-color: #f0f2e6;
+    border: 1px solid #cdcdcd;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+table {
+    background-color: #fff;
+}
+
+th {
+    padding: 10px 5px;
+    font-size: 14px;
+    color: #7c7b7b;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -user-select: none;
+}
+
+td {
+    padding: 5px 5px;
+    font-size: 12px;
+    background-color: #f7f2f2;
+    cursor:pointer !important;
+}
+
+th.active {
+    color: #fff;
+}
+
+th.active .arrow {
+    opacity: 1;
+}
+
+th.one{background-color: #c7d8c6;max-width:120px;}
+th.two{background-color: #efd9c1;max-width:45px;}
+th.three{background-color: #b6a19e;max-width:45px;}
+
+td.green{background-color: rgba(88, 255, 0, 0.35)}
+td.red{background-color: rgba(255, 153, 128, 0.49)}
+
+td.one{max-width:120px;}
+td.two{max-width:45px;}
+td.three{max-width:45px;}
+
+
+.arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    height: 0;
+    margin-left: 5px;
+    opacity: 0.66;
+}
+
+.arrow.asc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #fff;
+}
+
+.arrow.dsc {
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid #fff;
+}
+
+#search {
+    margin-bottom: 10px;
+}
+
+.editBtn
+{
+    text-align: center;
+    cursor:pointer;
+    background-color: #cdcdcd;
+}
+
+.editHeader{background-color: #66ab8c;}
+
+
+.field
+{
+    width:100%;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.field label{
+    float:left;
+}
+
+.field.down textarea{float:left;}
+.field.down select{width:auto; margin-left: 30px; float:left;}
+
+.field input, .field select
+{
+    float:right;
+    width: 70%;
+    height: 30px;
+    padding-left: 5px;
+    font-size: 18px;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+#appSteps {
+    font-size: 12px;
+    overflow: hidden;
+    margin-top: 30px;
+}
+#appSteps .field {
+    width: 25%;
+    float: left;
+    height: 60px;
+}
+#appSteps .field label {
+    text-align: left;
+}
+#appSteps .field select {
+    float: left;
+    font-size: 12px;
+}
+
+#pass
+{
+    height: 30px;
+    padding-left: 5px;
+    font-size: 18px;
+    font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
