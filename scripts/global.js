@@ -19,7 +19,7 @@ function contactSave(record, vm) {
         var formElement = '#' + field + '_input';
         var fieldVal = $(formElement).val();
 
-        if ($(formElement).is('input')) {
+        if ($(formElement).is('input') || $(formElement).is('textarea')) {
             contact[field] = fieldVal;
         }
         if ($(formElement).is('select')) {
@@ -44,7 +44,7 @@ function contactSave(record, vm) {
     $.ajax({
         type: 'POST',
         url: 'api.php',
-        data: '' //contact
+        data: contact //contact
     }).done(function (response) {
         console.log(response);
         swal({

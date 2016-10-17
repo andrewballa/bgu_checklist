@@ -93,7 +93,7 @@ function createErrorLog($filecontents)
 function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
 {
     $page = 0;
-    $all_records = null;
+    //$all_records = null;
 
     while(true)
     {

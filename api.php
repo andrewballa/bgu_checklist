@@ -75,20 +75,29 @@ function createContactsArray()
     foreach ($contactIdList as $cId)
     {
         $e= array_search($cId,array_column($contacts,'Id'));
-        $contactRecord = $contacts[$e];
+        //if($e!=""){
+            $contactRecord = $contacts[$e];
+        //}
 
         $r = array_search($cId,array_column($filteredLeads,'ContactID'));
-        $lead = $filteredLeads[$r];
+        //if($r!="") {
+            $lead = $filteredLeads[$r];
+            $contactRecord += array("LeadID" => $lead['Id']);
 
-        $j = array_search($lead['StageID'],array_column($stages,'Id'));
-        $contactRecord+=array("StageName"=>$stages[$j]["StageName"]);
-        $contactRecord+=array("StageID"=>$stages[$j]["Id"]);
+            $j = array_search($lead['StageID'],array_column($stages,'Id'));
+            //if($j!="") {
+                $contactRecord += array("StageName" => $stages[$j]["StageName"]);
+                $contactRecord += array("StageID" => $stages[$j]["Id"]);
+            //}
+        //}
+
 
         $n = array_search($contactRecord['OwnerID'], array_column($users, 'Id'));
-        $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
-        $contactRecord+=array("OwnerID"=>$contactRecord['OwnerID']);
+        if($n!=""){
+            $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
+        }
+        //$contactRecord+=array("OwnerID"=>$contactRecord['OwnerID']);
 
-        $contactRecord+=array("LeadID"=>$lead['Id']);
 
         $filteredContactArray[] = $contactRecord; //push this contact into the filtered array
 
@@ -149,6 +158,11 @@ if(isset($_REQUEST['query']))
     if($_REQUEST['query']=="getContacts") {
         //$time_start = microtime(true);
         echo json_encode(createContactsArray());
+        /*$s = getContacts();
+        foreach($s as $c)
+        {
+            echo $c['FirstName']. ' ' . $c['LastName']. ' '. $c['OwnerID'] . 'stop<br>';
+        }*/
         //$time_end = microtime(true);
         //echo $time_end - $time_start;
     }

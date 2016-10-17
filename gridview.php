@@ -23,7 +23,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(record,x) of filteredResults">
+        <tr v-for="record of filteredResults">
             <td title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record)" :class="cellClass(index,field,'td',record[field])" >
                 {{ fieldValue(record[field]) }}
             </td>
@@ -209,6 +209,8 @@
 
                 },
                 editRecord: function (record) {
+                    console.log(record)
+                    console.log(owners)
                     var n = getRecordIndex(vm.gridData, record.Id)
                     //sweet alert modal, which handles the edit form and ajax request to save data
                     swal({
@@ -218,10 +220,7 @@
                                 el: '#editForm',
                                 data: {
                                     stages: applicantStages,
-                                    stageID: record.StageID,
                                     owners: owners,
-                                    ownerID: record.OwnerID,
-                                    Program: record._ProgramInterestedIn0,
                                     formData: vm.gridData,
                                     r: n,
                                     ddlWaived: ['No', 'Yes', 'Waived'],
@@ -233,17 +232,8 @@
 
                                 },
                                 methods: {
-                                    stageSelected: function (id) {
-                                        if (this.stageID == id || id == 0)return "selected"
-                                    },
-                                    ownerSelected: function (id) {
-                                        if (this.ownerID == id || id == 0)return "selected"
-                                    },
-                                    progSelected:function (val) {
-                                        if(this.program ==val || val == 0)return "selected"
-                                    },
                                     ddlSelected: function (val, field) {
-                                        if (record[field] == val) return "selected"
+                                        if (record[field] == val || val == 0) return "selected"
                                     }
                                 },
                                 computed: {
@@ -267,79 +257,99 @@
                         '<div class="field"><label>Last Name</label><input type="text" id="LastName_input" :value="formData[r].LastName"></div>' +
 
                         '<div class="field"><label>Program</label><select id="_ProgramInterestedIn0_input">' +
-                        '<option :selected="progSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="progSelected(n)" v-for="n of programs" :value="n">{{ n }}</option>' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_ProgramInterestedIn0\')" v-for="n of programs" :value="n">{{ n }}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Stage</label><select id="StageName_input">' +
-                        '<option :selected="stageSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="stageSelected(n.Id)" v-for="n of stages" :value="n.Id">{{ n.StageName }}</option>' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n.Id,\'StageID\')" v-for="n of stages" :value="n.Id">{{ n.StageName }}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Owner</label><select id="OwnerName_input">' +
-                        '<option :selected="ownerSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="ownerSelected(n.Id)" v-for="n of owners" :value="n.Id">{{n.FirstName}} {{n.LastName}} </option>' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n.Id,\'OwnerID\')" v-for="n of owners" :value="n.Id">{{n.FirstName}} {{n.LastName}} </option>' +
                         '</select></div>' +
 
                         '<div id="appSteps">' +
                         '<div class="field"><label>Paid App Fee</label><select id="_PaidAppFee_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PaidAppFee\')" v-for="n of ddlWaived" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Personal Ref?</label><select id="_PersonalReference_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PersonalReference\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Pastoral Ref?</label><select id="_PasterReferenceReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PasterReferenceReceived\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Teacher/Employer Ref?</label><select id="_TeacherEmployerReferenceReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_TeacherEmployerReferenceReceived\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>HS/GED Transcript?</label><select id="_HighSchoolTranscriptReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_HighSchoolTranscriptReceived\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Clg Transcript 1</label><select id="_MostRecentCollegeTranscriptsReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_MostRecentCollegeTranscriptsReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Clg Transcript 2</label><select id="_CollegeTranscript2Received_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_CollegeTranscript2Received\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Clg Transcript 3</label><select id="_College3TranscriptsReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_College3TranscriptsReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Room Deposit?</label><select id="_PaidRoomDeposit0_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PaidRoomDeposit0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Enrolled?</label><select id="_EnrolledInClasses0_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_EnrolledInClasses0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>PT Form?</label><select id="_FilledoutPTQuestionnaire0_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_FilledoutPTQuestionnaire0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Roomate Form?</label><select id="_FilledOutRoommateQuestionnaire_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_FilledOutRoommateQuestionnaire\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Arrival Info?</label><select id="_SentArrivalInformation0_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_SentArrivalInformation0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Immunization?</label><select id="_FilledOutImmunizationForm0_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_FilledOutImmunizationForm0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>FAFSA?</label><select id="_AppliedforFAFSA_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_AppliedforFAFSA\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>VFAO Interview?</label><select id="_CompletedVFAOStudentInterview_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_CompletedVFAOStudentInterview\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Applied for loans?</label><select id="_AppliedforStudentLoansoptional_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_AppliedforStudentLoansoptional\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Emergency Info?</label><select id="_SentEmergencyContactInformation_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_SentEmergencyContactInformation\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Joined Facebook?</label><select id="_JoinedFacebook_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_JoinedFacebook\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '</div>' +
 
                         '<div class="field down"><label>Additional Items Needed?</label><select id="_AdditionalItemsNeeded_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_AdditionalItemsNeeded\')" v-for="n of ddlWaived" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field down"><label>Additional Items</label><textarea rows="5" cols="50" id="_AdditionalItems_input" :value="formData[r]._AdditionalItems"/></div>' +
