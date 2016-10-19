@@ -40,17 +40,24 @@ function contactSave(record, vm) {
     contact.Id = record.Id;
     contact.LeadID = record.LeadID;
 
-    console.log(contact)
     $.ajax({
         type: 'POST',
         url: 'api.php',
         data: contact //contact
     }).done(function (response) {
-        console.log(response);
+        var type = 'success';
+        var title = 'Saved Data'
+        var html = ''
+
+        if(response=="ERROR") {
+            type = 'error'
+            title = 'Something went wrong!'
+            html = 'Check log files.'
+        }
         swal({
-            type: 'success',
-            title: 'Saved Data',
-            html: response
+            type: type,
+            title: title,
+            html: html
         }).done()
 
         var n = getRecordIndex(vm.gridData, record.Id)

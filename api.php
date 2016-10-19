@@ -22,7 +22,8 @@ function getContacts()
 function getStages()
 {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
-    $stageIds = array('39','41','43','45','51','57','59','61','63','65','80','82','84','86','88','98','100','102','104','106','108','110' );
+    //refer to the file "test_data/allstages.json" to see what Stages these ID's belong to
+    $stageIds = array('39','41','43','51','57','59','61','63','80','82','84','86','88','98','100','102','106','108','110' );
 
     $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName"));
     $stages = executeApiCall($call4);
@@ -148,7 +149,11 @@ function updateContact()
         //call to update Lead record
         $call2 = buildXmlCall_DataUpdate("Lead",$leadID,array("StageID" => $stageID));
         $result = executeApiCall($call2);
-        return $stageID;
+        return $result;
+    }
+    else
+    {
+        return $result_addcontact;
     }
 }
 

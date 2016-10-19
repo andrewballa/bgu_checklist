@@ -8,11 +8,21 @@
 <script src="scripts/sweetalert/sweetalert2.js"></script>
 <script src="scripts/global.js"></script>
 
-<div id="test"></div>
-<!--<div id="loader" class="loader loader--snake"></div>-->
 <div id="app" style="display:none">
     <!--<pre>{{$data | json }}</pre>-->
-    <div><input class="searchBox" placeholder="Search" v-model="searchQuery"></div>
+    <div class="filterFields">
+        <input id="searchBox" placeholder="Search" v-model="searchQuery">
+        <select class="ddlFilter" v-model="progFilter">
+            <option class="pink" value="">Program</option>
+            <option v-for="n of progCategories" :value="n.category">{{ n.category }}</option>
+        </select>
+
+        <select class="ddlFilter" v-model="ownerFilter">
+            <option class="pink" value="">Owner</option>
+            <option v-for="n of owners" :value="n.FirstName + ' ' + n.LastName">{{n.FirstName}} {{n.LastName }}</option>
+        </select>
+    </div>
+
     <table>
         <thead>
         <tr>
@@ -34,6 +44,29 @@
 
 
 <script>
+
+    var programs = ['MA Intercultural Ministry Leadership','MA Intercultural Ministry Studies','MA Intercultural Ministry Education',
+        'BA Intercultural Ministry Studies and Bible and Theology', 'AA Intercultural Ministry','Certificate in Bible and Missions','Certificate in Pre-Field Preparation',
+        'LEAD Worship','LEAD Media'];
+
+    var progCategories =[
+        {
+            "category":"Undergraduate",
+            "programs":["BA Intercultural Ministry Studies and Bible and Theology","AA Intercultural Ministry","Certificate in Bible and Missions","Certificate in Pre-Field Preparation"]
+        },
+        {
+            "category":"Graduate",
+            "programs":["MA Intercultural Ministry Leadership","MA Intercultural Ministry Studies","MA Intercultural Ministry Education"]
+        },
+        {
+            "category":"LEAD",
+            "programs":["LEAD Worship","LEAD Media"]
+        }
+    ];
+    var applicantStages;
+    var userData;
+
+
     function loadApp() {
 /*        swal({
             type: 'question',
@@ -87,8 +120,6 @@
 
 
     function bootstrapApp() {
-        var applicantStages;
-        var owners;
 
         // bootstrap the Vue app
         var vm = new Vue({
@@ -97,6 +128,8 @@
                 order: 1,
                 sortField: 'LastName',
                 searchQuery: '',
+                progFilter:'',
+                ownerFilter:'',
                 fields: ['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
                     '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
@@ -106,22 +139,45 @@
                 gridData: [],
                 headerNames: ['First Name', 'Last Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
                     'Col Tran 1', 'Col Tran 2', 'Col Tran 3', 'Room Depo', 'Enroll Class', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
-                    'Immun Form', 'FAFSA Apply', 'VFAO Intrvw', 'Apply Stnt Loans', 'Emrgcy Cont Info', 'Join FB Group', 'Adtnl Items Need?','Adtnl Items']
+                    'Immun Form', 'FAFSA Apply', 'VFAO Intrvw', 'Apply Stnt Loans', 'Emrgcy Cont Info', 'Join FB Group', 'Adtnl Items Need?','Adtnl Items'],
+                owners:[],
+                programs:programs,
+                progCategories:progCategories
             },
             computed: {
                 filteredResults: function () {
                     var searchTerm = this.searchQuery && this.searchQuery.toLowerCase()
+                    var progFilter = this.progFilter && this.progFilter.toLowerCase()
+                    var ownerFilter = this.ownerFilter && this.ownerFilter.toLowerCase()
                     var sortfield = this.sortField
                     var order = this.order || 1
                     var data = this.gridData
 
                     if (searchTerm) {
-                        data = data.filter(function (row) {
-                            return Object.keys(row).some(function (key) {
-                                return String(row[key]).toLowerCase().indexOf(searchTerm) > -1
-                            })
-                        })
+                        data = filterTerm(searchTerm)
                     }
+
+                    if (ownerFilter) {
+                        data = filterTerm(ownerFilter)
+                    }
+
+                    if (progFilter) {
+                        var finalResult = [];
+
+                        var j;
+                        if(progFilter=="undergraduate") j=0;
+                        if(progFilter=="graduate") j=1;
+                        if(progFilter=="lead") j=2;
+
+                        var progArray = progCategories[j].programs
+                        var filterData = [];
+                        for(var i=0;i<progArray.length;i++) {
+                            filterData = filterTerm(progArray[i].toLowerCase())
+                            finalResult = finalResult.concat(filterData)
+                        }
+                        data = finalResult
+                    }
+
                     if (sortfield) {
                         data = data.slice().sort(function (a, b) {
                             a = a[sortfield]
@@ -129,6 +185,16 @@
                             return (a === b ? 0 : a > b ? 1 : -1) * order
                         })
                     }
+
+                    function filterTerm(term) {
+                        var filteredData = data.filter(function (record) {
+                            return Object.keys(record).some(function (field) {
+                                return String(record[field]).toLowerCase().indexOf(term) > -1
+                            })
+                        })
+                        return filteredData
+                    }
+
                     return data
                 },
                 displayFields: function () {
@@ -137,13 +203,13 @@
                 }
             },
             mounted: function () {
-                //get the contact data from the API
+                //get all Contacts from Infusionsoft
                 $.ajax({
                     type: 'POST',
-                    url: './test_data/contact.json', // ./test_data/contact.json
+                    url: 'api.php', // ./test_data/contact.json
                     data: "query=getContacts"
                 }).done(function (response) {
-                    var contactdata = response// JSON.parse(response)
+                    var contactdata = JSON.parse(response)// JSON.parse(response)
                     $('#app').show();
                     vm.gridData = contactdata
                     swal.close()
@@ -151,23 +217,25 @@
                     console.log(error)
                 })
 
+                //get all Application stages from Infusionsoft
                 $.ajax({
                     type: 'POST',
                     url: 'api.php', //./contact.json
                     data: "query=getStages"
                 }).done(function (response) {
                     applicantStages = JSON.parse(response)
-                    //$("#test").html("<pre>" + response + "</pre>")
-                })
+                });
 
-                //Get all users from the API
+                //Get all users from Infusionsoft
                 $.ajax({
                     type: 'POST',
                     url: 'api.php', //./contact.json
                     data: "query=getUsers"
                 }).done(function (response) {
-                    owners = JSON.parse(response)
-                })
+                    userData = JSON.parse(response)
+                    vm.owners = userData
+                });
+
             },
             methods: {
                 sortBy: function (field) {
@@ -209,8 +277,6 @@
 
                 },
                 editRecord: function (record) {
-                    console.log(record)
-                    console.log(owners)
                     var n = getRecordIndex(vm.gridData, record.Id)
                     //sweet alert modal, which handles the edit form and ajax request to save data
                     swal({
@@ -220,15 +286,15 @@
                                 el: '#editForm',
                                 data: {
                                     stages: applicantStages,
-                                    owners: owners,
+                                    owners: userData,
                                     formData: vm.gridData,
                                     r: n,
                                     ddlWaived: ['No', 'Yes', 'Waived'],
                                     ddlBinary: ['No', 'Yes'],
                                     ddlNotNeeded: ['No', 'Yes', 'Not Needed'],
                                     //these program strings need to be exactly copied from infusionsoft.
-                                    programs:['MA Intercultural Leadership','MA Intercultural Studies','MA Intercultural Education','BA Intercultural Studies and Theology',
-                                        'AA Intercultural Studies','Certificate in Bible and Missions','Certificate in Pre-Field Preparation','LEAD Worship','LEAD Media']
+                                    programs:programs,
+                                    progCategories:progCategories
 
                                 },
                                 methods: {
@@ -247,18 +313,13 @@
                                 }
                             });
                         },
-                        /*['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference','_PasterReferenceReceived',
-                         '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                         '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
-                         '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional',
-                         '_SentEmergencyContactInformation', '_JoinedFacebook','_AdditionalItemsNeeded','_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id']*/
                         html: '<form id="editForm" method="post" action="gridview.php">' +
                         '<div class="field"><label>First Name</label><input type="text" id="FirstName_input" :value="formData[r].FirstName"></div>' +
                         '<div class="field"><label>Last Name</label><input type="text" id="LastName_input" :value="formData[r].LastName"></div>' +
 
                         '<div class="field"><label>Program</label><select id="_ProgramInterestedIn0_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="ddlSelected(n,\'_ProgramInterestedIn0\')" v-for="n of programs" :value="n">{{ n }}</option>' +
+                        '<option :selected="ddlSelected(n,\'_ProgramInterestedIn0\')" v-for="(n,i) of programs" :value="n">{{ n }}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>Stage</label><select id="StageName_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
@@ -376,6 +437,8 @@
 
 
     $(document).ready(function () {
-        loadApp()
+
+        loadApp();
+
     })
 </script>

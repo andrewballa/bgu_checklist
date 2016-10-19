@@ -25,18 +25,18 @@ function executeApiCall($xmlCall)
         return $result->value();
     }
     else if($result->faultCode()) {
-        /*//if there's an error, write the error message and the xmlcall to a log file
+        //if there's an error, write the error message and the xmlcall to a log file
         $vardump = var_export(php_xmlrpc_decode($xmlCall), true);
         $filecontents = "INFUSIONSOFT API ERROR MESSAGE: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
         createErrorLog($filecontents);
-        echo $result->faultString() . "\r\n\r\n" . $xmlCall->method();//remove*/
-        return $result->faultString();
+        return "ERROR";
     }
     else
     {
-        /*$vardump = var_export(php_xmlrpc_decode($xmlCall), true);
+        $vardump = var_export(php_xmlrpc_decode($xmlCall), true);
         $filecontents = "ERROR: " . date("Y-m-d H:i:s") . "\r\n". $result->faultString() . "\r\n\r\n" . $xmlCall->method() . "\r\n\r\n" . $vardump;
-        createErrorLog($filecontents);*/
+        createErrorLog($filecontents);
+        return "ERROR";
     }
 }
 
