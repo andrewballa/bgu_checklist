@@ -68,7 +68,7 @@
 
 
     function loadApp() {
-/*        swal({
+        swal({
             type: 'question',
             title: 'Enter Password',
             allowEscapeKey: false,
@@ -100,7 +100,7 @@
                     })
                 })
             }
-        }).then(function () {*/
+        }).then(function () {
                 swal({
                     title: 'Loading...',
                     html:   '<p>Loading data from Infusionsoft, takes about 10-15 seconds</p>' +
@@ -113,11 +113,10 @@
                     }
 
                 }).done();
-            //}
-        //)
+            }
+        )
 
     }
-
 
     function bootstrapApp() {
 
