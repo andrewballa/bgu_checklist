@@ -8,6 +8,7 @@ function getRecordIndex(array, recordId) {
     return n;
 }
 
+
 function contactSave(record, vm) {
 
     var contact = {};

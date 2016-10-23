@@ -1,11 +1,11 @@
 <!--replace these dev libraries with prod versions-->
 <link rel="stylesheet" href="scripts/style.css" type="text/css" media="screen"/>
 <link rel="stylesheet" href="scripts/loader.css" type="text/css" media="screen"/>
-<link rel="stylesheet" href="scripts/sweetalert/sweetalert2.css" type="text/css"/>
+<link rel="stylesheet" href="scripts/sweetalert/sweetalert2.min.css" type="text/css"/>
 
 <script src="scripts/jquery/jquery-3.1.1.js"></script>
-<script src="scripts/vue/vue2.js"></script>
-<script src="scripts/sweetalert/sweetalert2.js"></script>
+<script src="scripts/vue/vue2.min.js"></script>
+<script src="scripts/sweetalert/sweetalert2.min.js"></script>
 <script src="scripts/global.js"></script>
 
 <div id="app" style="display:none">
@@ -23,15 +23,16 @@
         </select>
     </div>
 
+    <div style="">
+    <div id="header">
+        <div class="hcell" v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th')">
+            {{ headerNames[index] }}
+            <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
+        </div>
+    </div>
+    </div>
+
     <table>
-        <thead>
-        <tr>
-            <th v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th')">
-                {{ headerNames[index] }}
-                <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
-            </th>
-        </tr>
-        </thead>
         <tbody>
         <tr v-for="record of filteredResults">
             <td title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record)" :class="cellClass(index,field,'td',record[field])" >
@@ -205,10 +206,10 @@
                 //get all Contacts from Infusionsoft
                 $.ajax({
                     type: 'POST',
-                    url: 'api.php', // ./test_data/contact.json
+                    url: './test_data/contact.json', // ./test_data/contact.json
                     data: "query=getContacts"
                 }).done(function (response) {
-                    var contactdata = JSON.parse(response)// JSON.parse(response)
+                    var contactdata = response// JSON.parse(response)
                     $('#app').show();
                     vm.gridData = contactdata
                     swal.close()

@@ -7,7 +7,7 @@ body {
 
 .pink{background-color:rgba(255, 153, 128, 0.49);}
 
-.filterFields{margin:10px 0;}
+.filterFields{margin:100px 0 10px 0;}
 .filterFields input, .filterFields select
 {
     height: 36px;
@@ -31,7 +31,7 @@ table {
     background-color: #fff;
 }
 
-th {
+.hcell {
     padding: 10px 5px;
     font-size: 14px;
     color: #7c7b7b;
@@ -39,7 +39,32 @@ th {
     -webkit-user-select: none;
     -moz-user-select: none;
     -user-select: none;
+    float:left;
+    height: 50px;
+    font-weight: bold;
+    border: 1px solid white;
+
 }
+
+#header
+{
+    width: 1865px;
+    overflow: hidden;
+    margin-left: 1px;
+}
+
+.hcell.active {
+    color: #fff;
+}
+
+.hcell.active .arrow {
+    opacity: 1;
+}
+
+.hcell.one{background-color: #c7d8c6;width:120px;}
+.hcell.two{background-color: #efd9c1;width:45px;}
+.hcell.three{background-color: #b6a19e;width:45px;}
+
 
 td {
     padding: 5px 5px;
@@ -48,24 +73,12 @@ td {
     cursor:pointer !important;
 }
 
-th.active {
-    color: #fff;
-}
-
-th.active .arrow {
-    opacity: 1;
-}
-
-th.one{background-color: #c7d8c6;max-width:120px;}
-th.two{background-color: #efd9c1;max-width:45px;}
-th.three{background-color: #b6a19e;max-width:45px;}
-
 td.green{background-color: rgba(88, 255, 0, 0.35)}
 td.red{background-color: rgba(255, 153, 128, 0.49)}
 
-td.one{max-width:120px;}
-td.two{max-width:45px;}
-td.three{max-width:45px;}
+td.one{min-width:120px;}
+td.two{min-width:45px;}
+td.three{min-width:45px;}
 
 
 .arrow {

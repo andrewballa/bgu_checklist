@@ -109,11 +109,6 @@ function createContactsArray()
 
 function updateContact()
 {
-    /*['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference','_PasterReferenceReceived',
-                    '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
-                    '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional',
-                    '_SentEmergencyContactInformation', '_JoinedFacebook','_AdditionalItemsNeeded','_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id']*/
     global $key;
     $contactID= (int)$_REQUEST["Id"];
     $leadID = (int)$_REQUEST["LeadID"];
