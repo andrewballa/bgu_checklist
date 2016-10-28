@@ -27,6 +27,14 @@ body {
     font-size: 18px;
 }
 
+#rowCount {
+  height: 20px;
+  width: 130px;
+  padding: 10px 10px;
+  background-color: rgba(88, 255, 0, 0.35);
+  float: right;
+}
+
 table {
     background-color: #fff;
 }

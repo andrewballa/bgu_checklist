@@ -19,7 +19,7 @@ function getContacts()
     return $allDBContacts;
 }
 
-function getStages()
+function getStages($stageTye)
 {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
     //refer to the file "test_data/allstages.json" to see what Stages these ID's belong to
@@ -29,12 +29,18 @@ function getStages()
     $stages = executeApiCall($call4);
 
     $filterStages = null;
-    foreach($stageIds as $id)
-    {
-        $keys = array_keys(array_column($stages,'Id'),$id);
-        foreach($keys as $k)
+
+    if($stageTye == "all") {
+      $filterStages = $stages;
+    }
+    else {
+        foreach($stageIds as $id)
         {
-            $filterStages[] = $stages[$k];
+            $keys = array_keys(array_column($stages,'Id'),$id);
+            foreach($keys as $k)
+            {
+                $filterStages[] = $stages[$k];
+            }
         }
     }
 
@@ -172,7 +178,8 @@ if(isset($_REQUEST['query']))
         //echo $time_end - $time_start;
     }
     if($_REQUEST['query']=="getStages") {
-        echo json_encode(getStages());
+
+        echo json_encode(getStages($_REQUEST['stageType']));
     }
     if($_REQUEST['query']=="getUsers") {
         echo json_encode(getUsers());

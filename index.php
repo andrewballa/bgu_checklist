@@ -21,12 +21,13 @@
             <option class="pink" value="">Owner</option>
             <option v-for="n of owners" :value="n.FirstName + ' ' + n.LastName">{{n.FirstName}} {{n.LastName }}</option>
         </select>
+        <div id="rowCount">Total Rows: {{filteredResults.length}}</div>
     </div>
 
     <table>
         <thead>
         <tr>
-            <th v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th')">
+            <th v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th',field)">
                 {{ headerNames[index] }}
                 <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
             </th>
@@ -34,8 +35,7 @@
         </thead>
         <tbody>
         <tr v-for="record of filteredResults">
-            <td title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record)" :class="cellClass(index,field,'td',record[field])" >
-                {{ fieldValue(record[field]) }}
+            <td v-html="fieldValue(record,field)" title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record,field)" :class="cellClass(index,field,'td',record)" >
             </td>
         </tr>
         </tbody>
@@ -64,43 +64,44 @@
         }
     ];
     var applicantStages;
+    var allStages;
     var userData;
 
 
     function loadApp() {
-        swal({
-            type: 'question',
-            title: 'Enter Password',
-            allowEscapeKey: false,
-            allowOutsideClick: false,
-            showLoaderOnConfirm: true,
-            html: '<input id="pass" type="password"/>',
-            preConfirm: function () {
-                return new Promise(function (resolve, reject) {
-                    $.ajax({
-                        type: 'POST',
-                        url: 'api.php', //./contact.json
-                        data: "query=checkPass"
-                    }).done(function (response) {
-                        var listener = response
-                        if ($('#pass').val() == response) {
-                            resolve();
-                        }
-                        else {
-                            swal({
-                                type: 'error',
-                                title: 'Wrong Password',
-                                allowEscapeKey: false,
-                                allowOutsideClick: false,
-                            }).then(function () {
-                                    loadApp()
-                                }
-                            )
-                        }
-                    })
-                })
-            }
-        }).then(function () {
+        // swal({
+        //     type: 'question',
+        //     title: 'Enter Password',
+        //     allowEscapeKey: false,
+        //     allowOutsideClick: false,
+        //     showLoaderOnConfirm: true,
+        //     html: '<input id="pass" type="password"/>',
+        //     preConfirm: function () {
+        //         return new Promise(function (resolve, reject) {
+        //             $.ajax({
+        //                 type: 'POST',
+        //                 url: 'api.php', //./contact.json
+        //                 data: "query=checkPass"
+        //             }).done(function (response) {
+        //                 var listener = response
+        //                 if ($('#pass').val() == response) {
+        //                     resolve();
+        //                 }
+        //                 else {
+        //                     swal({
+        //                         type: 'error',
+        //                         title: 'Wrong Password',
+        //                         allowEscapeKey: false,
+        //                         allowOutsideClick: false,
+        //                     }).then(function () {
+        //                             loadApp()
+        //                         }
+        //                     )
+        //                 }
+        //             })
+        //         })
+        //     }
+        // }).then(function () {
                 swal({
                     title: 'Loading...',
                     html:   '<p>Loading data from Infusionsoft, takes about 10-15 seconds</p>' +
@@ -113,8 +114,8 @@
                     }
 
                 }).done();
-            }
-        )
+        //     }
+        // )
 
     }
 
@@ -129,19 +130,20 @@
                 searchQuery: '',
                 progFilter:'',
                 ownerFilter:'',
-                fields: ['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+                fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
                     '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
                     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_AppliedforStudentLoansoptional',
                     '_SentEmergencyContactInformation', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
                 gridData: [],
-                headerNames: ['First Name', 'Last Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
+                headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
                     'Col Tran 1', 'Col Tran 2', 'Col Tran 3', 'Room Depo', 'Enroll Class', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
                     'Immun Form', 'FAFSA Apply', 'VFAO Intrvw', 'Apply Stnt Loans', 'Emrgcy Cont Info', 'Join FB Group', 'Adtnl Items Need?','Adtnl Items'],
                 owners:[],
                 programs:programs,
-                progCategories:progCategories
+                progCategories:progCategories,
+                contactUrl:'https://hq171.infusionsoft.com/Contact/manageContact.jsp?view=edit&ID='
             },
             computed: {
                 filteredResults: function () {
@@ -220,9 +222,18 @@
                 $.ajax({
                     type: 'POST',
                     url: 'api.php', //./contact.json
-                    data: "query=getStages"
+                    data: "query=getStages&stageType=limited"
                 }).done(function (response) {
                     applicantStages = JSON.parse(response)
+                });
+
+                //get all Application stages from Infusionsoft
+                $.ajax({
+                    type: 'POST',
+                    url: 'api.php', //./contact.json
+                    data: "query=getStages&stageType=all"
+                }).done(function (response) {
+                    allStages = JSON.parse(response)
                 });
 
                 //Get all users from Infusionsoft
@@ -241,41 +252,63 @@
                     this.sortField = field
                     this.order = this.order * -1
                 },
-                cellClass: function (index, field, type, fieldVal) {
-                    var cssClass = "";
+                cellClass: function (index, field, type, record) {
+                    var fieldVal = record[field];
+                    var classColor = "";
+                    var classPos = "";
+                    var classActive = "";
+
                     if(type=="th") {
                         if (this.sortField == field) {
-                            cssClass += " active";
+                            classActive = " active";
                         }
                     }
-                    if(type=="td" && fieldVal!=undefined)
+                    if(type=="td")
                     {
-                        fieldVal = fieldVal.toLowerCase()
-                        if(fieldVal=="yes" || fieldVal=="not needed") cssClass += " green"
-                        if(fieldVal=="no" ) cssClass += " red"
+                        if(fieldVal!=undefined) fieldVal = fieldVal.toLowerCase()
+
+                        if(fieldVal=="yes" || fieldVal=="not needed") classColor = " green"
+                        if(fieldVal=="no" ) classColor = " red"
+
+                        if(field=='_AdditionalItemsNeeded' && fieldVal!=undefined) classColor=" green"
+                        else classColor = ""
+
+                        if(field=='_AdditionalItems')
+                        {
+                          var addItemNeeded = record['_AdditionalItemsNeeded'];
+                          addItemNeeded = addItemNeeded!=undefined ? addItemNeeded.toLowerCase() : addItemNeeded
+                          if(addItemNeeded=="yes" && (fieldVal==undefined || fieldVal=="null")) classColor = " red"
+                          else if(addItemNeeded==undefined) classColor = ""
+                          else classColor = " green"
+                        }
 
                     }
                     if (index >= 0 && index < 5) {
-                        cssClass += " one";
+                        classPos = " one";
                     }
                     if (index >= 5 && index < 13) {
-                        cssClass += " two";
+                        classPos = " two";
                     }
                     if (index >= 13 && index < 26) {
-                        cssClass += " three";
+                        classPos = " three";
                     }
-                    return cssClass
+                    return classColor+classPos+classActive;
                 },
-                fieldValue :function (fieldVal) {
+                fieldValue :function (record,field) {
+                    var fieldVal = record[field];
                     if(fieldVal!=undefined) {
                         fieldVal = fieldVal.length > 50 ? fieldVal.substr(0, 50)+"..." : fieldVal;
+                        if(field=='LastName')
+                        {
+                          fieldVal = '<a href="'+this.contactUrl+record.Id+'" target="_blank">' + fieldVal + '</a>';
+                        }
                         return fieldVal
                     }
                 },
-                cellStatus: function (fieldVal) {
+                editRecord: function (record,field) {
 
-                },
-                editRecord: function (record) {
+                    if(field=='LastName') return false
+
                     var n = getRecordIndex(vm.gridData, record.Id)
                     //sweet alert modal, which handles the edit form and ajax request to save data
                     swal({
@@ -284,7 +317,7 @@
                             var formVm = new Vue({
                                 el: '#editForm',
                                 data: {
-                                    stages: applicantStages,
+                                    stages: allStages,
                                     owners: userData,
                                     formData: vm.gridData,
                                     r: n,
