@@ -132,13 +132,13 @@
                 ownerFilter:'',
                 fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_RegisteredForClasses', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
                     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_AppliedforStudentLoansoptional',
                     '_SentEmergencyContactInformation', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
                 gridData: [],
                 headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
-                    'Col Tran 1', 'Col Tran 2', 'Col Tran 3', 'Room Depo', 'Enroll Class', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
+                    'Col Tran 1', 'Col Tran 2', 'Col Tran 3', 'Room Depo', 'Reg. Class', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
                     'Immun Form', 'FAFSA Apply', 'VFAO Intrvw', 'Apply Stnt Loans', 'Emrgcy Cont Info', 'Join FB Group', 'Adtnl Items Need?','Adtnl Items'],
                 owners:[],
                 programs:programs,
@@ -399,9 +399,9 @@
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PaidRoomDeposit0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
-                        '<div class="field"><label>Enrolled?</label><select id="_EnrolledInClasses0_input">' +
+                        '<div class="field"><label>Class Registered?</label><select id="_RegisteredForClasses_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="ddlSelected(n,\'_EnrolledInClasses0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '<option :selected="ddlSelected(n,\'_RegisteredForClasses\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
                         '<div class="field"><label>PT Form?</label><select id="_FilledoutPTQuestionnaire0_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +

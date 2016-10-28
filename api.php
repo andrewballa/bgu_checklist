@@ -12,7 +12,7 @@ function getContacts()
 {
     $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID','_PaidAppFee','_PersonalReference','_PasterReferenceReceived',
         '_HighSchoolTranscriptReceived','_MostRecentCollegeTranscriptsReceived','_CollegeTranscript2Received','_College3TranscriptsReceived','_PaidRoomDeposit0',
-        '_EnrolledInClasses0','_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire','_SentArrivalInformation0','_FilledOutImmunizationForm0',
+        '_RegisteredForClasses','_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire','_SentArrivalInformation0','_FilledOutImmunizationForm0',
         '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional','_SentEmergencyContactInformation','_JoinedFacebook',
         '_AdditionalItemsNeeded','_AdditionalItems','_TeacherEmployerReferenceReceived');
     $allDBContacts= recursiveFetchData("Contact",array('FirstName'=>'%'),$contactFields);
@@ -117,7 +117,7 @@ function updateContact()
 {
     /*['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference','_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_EnrolledInClasses0', '_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
+                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_RegisteredForClasses', '_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
                     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional',
                     '_SentEmergencyContactInformation', '_JoinedFacebook','_AdditionalItemsNeeded','_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id']*/
     global $key;
@@ -133,7 +133,7 @@ function updateContact()
         "_TeacherEmployerReferenceReceived" => $_REQUEST["_TeacherEmployerReferenceReceived"],"_HighSchoolTranscriptReceived" => $_REQUEST["_HighSchoolTranscriptReceived"],
         "_MostRecentCollegeTranscriptsReceived" => $_REQUEST["_MostRecentCollegeTranscriptsReceived"],"_CollegeTranscript2Received" => $_REQUEST["_CollegeTranscript2Received"],
         "_College3TranscriptsReceived" => $_REQUEST["_College3TranscriptsReceived"],"_PaidRoomDeposit0" => $_REQUEST["_PaidRoomDeposit0"],
-        "_EnrolledInClasses0" => $_REQUEST["_EnrolledInClasses0"],"_FilledoutPTQuestionnaire0" => $_REQUEST["_FilledoutPTQuestionnaire0"],
+        "_RegisteredForClasses" => $_REQUEST["_RegisteredForClasses"],"_FilledoutPTQuestionnaire0" => $_REQUEST["_FilledoutPTQuestionnaire0"],
         "_FilledOutRoommateQuestionnaire" => $_REQUEST["_FilledOutRoommateQuestionnaire"],"_SentArrivalInformation0" => $_REQUEST["_SentArrivalInformation0"],
         "_FilledOutImmunizationForm0" => $_REQUEST["_FilledOutImmunizationForm0"],"_AppliedforFAFSA" => $_REQUEST["_AppliedforFAFSA"],
         "_CompletedVFAOStudentInterview" => $_REQUEST["_CompletedVFAOStudentInterview"],"_AppliedforStudentLoansoptional" => $_REQUEST["_AppliedforStudentLoansoptional"],
