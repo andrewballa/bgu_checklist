@@ -69,39 +69,39 @@
 
 
     function loadApp() {
-        // swal({
-        //     type: 'question',
-        //     title: 'Enter Password',
-        //     allowEscapeKey: false,
-        //     allowOutsideClick: false,
-        //     showLoaderOnConfirm: true,
-        //     html: '<input id="pass" type="password"/>',
-        //     preConfirm: function () {
-        //         return new Promise(function (resolve, reject) {
-        //             $.ajax({
-        //                 type: 'POST',
-        //                 url: 'api.php', //./contact.json
-        //                 data: "query=checkPass"
-        //             }).done(function (response) {
-        //                 var listener = response
-        //                 if ($('#pass').val() == response) {
-        //                     resolve();
-        //                 }
-        //                 else {
-        //                     swal({
-        //                         type: 'error',
-        //                         title: 'Wrong Password',
-        //                         allowEscapeKey: false,
-        //                         allowOutsideClick: false,
-        //                     }).then(function () {
-        //                             loadApp()
-        //                         }
-        //                     )
-        //                 }
-        //             })
-        //         })
-        //     }
-        // }).then(function () {
+        swal({
+            type: 'question',
+            title: 'Enter Password',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            showLoaderOnConfirm: true,
+            html: '<input id="pass" type="password"/>',
+            preConfirm: function () {
+                return new Promise(function (resolve, reject) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'api.php', //./contact.json
+                        data: "query=checkPass"
+                    }).done(function (response) {
+                        var listener = response
+                        if ($('#pass').val() == response) {
+                            resolve();
+                        }
+                        else {
+                            swal({
+                                type: 'error',
+                                title: 'Wrong Password',
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                            }).then(function () {
+                                    loadApp()
+                                }
+                            )
+                        }
+                    })
+                })
+            }
+        }).then(function () {
                 swal({
                     title: 'Loading...',
                     html:   '<p>Loading data from Infusionsoft, takes about 10-15 seconds</p>' +
@@ -114,8 +114,8 @@
                     }
 
                 }).done();
-        //     }
-        // )
+            }
+        )
 
     }
 
