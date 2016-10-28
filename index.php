@@ -132,14 +132,16 @@
                 ownerFilter:'',
                 fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_RegisteredForClasses', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
-                    '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_AppliedforStudentLoansoptional',
-                    '_SentEmergencyContactInformation', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
+                    '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+                    '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
+                    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+                    '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
                 gridData: [],
                 headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
-                    'Col Tran 1', 'Col Tran 2', 'Col Tran 3', 'Room Depo', 'Reg. Class', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
-                    'Immun Form', 'FAFSA Apply', 'VFAO Intrvw', 'Apply Stnt Loans', 'Emrgcy Cont Info', 'Join FB Group', 'Adtnl Items Need?','Adtnl Items'],
+                    'Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Photo Id','Acdmc Appeal', 'Room Depo', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
+                    'Immun Form', 'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FAFSA Apply','VFAO Intrvw','Fin Aid Verify',
+                    'Fin Aid Complete', 'Apply Loans', 'Emrgcy Cont Info', 'Reg. Class','Online Orient', 'Join FB Group','Adtnl Items Need?','Adtnl Items'],
                 owners:[],
                 programs:programs,
                 progCategories:progCategories,
@@ -265,13 +267,15 @@
                     }
                     if(type=="td")
                     {
-                        if(fieldVal!=undefined) fieldVal = fieldVal.toLowerCase()
+                        fieldVal = fieldVal!=undefined ? fieldVal.toLowerCase() : fieldVal;
 
                         if(fieldVal=="yes" || fieldVal=="not needed") classColor = " green"
                         if(fieldVal=="no" ) classColor = " red"
 
-                        if(field=='_AdditionalItemsNeeded' && fieldVal!=undefined) classColor=" green"
-                        else classColor = ""
+                        if(field=='_AdditionalItemsNeeded')
+                        {
+                          classColor = fieldVal!=undefined ? " green" : ""
+                        }
 
                         if(field=='_AdditionalItems')
                         {
@@ -286,10 +290,10 @@
                     if (index >= 0 && index < 5) {
                         classPos = " one";
                     }
-                    if (index >= 5 && index < 13) {
+                    if (index >= 5 && index < 15) {
                         classPos = " two";
                     }
-                    if (index >= 13 && index < 26) {
+                    if (index >= 15 && index < 35) {
                         classPos = " three";
                     }
                     return classColor+classPos+classActive;
@@ -345,6 +349,12 @@
                                 }
                             });
                         },
+// ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+// '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
+// '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+// '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
+// '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+// '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
                         html: '<form id="editForm" method="post" action="gridview.php">' +
                         '<div class="field"><label>First Name</label><input type="text" id="FirstName_input" :value="formData[r].FirstName"></div>' +
                         '<div class="field"><label>Last Name</label><input type="text" id="LastName_input" :value="formData[r].LastName"></div>' +
@@ -395,6 +405,17 @@
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_College3TranscriptsReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                         '</select></div>' +
+
+                        '<div class="field"><label>Photo ID?</label><select id="_PhotoIDReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_PhotoIDReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
+                        '<div class="field"><label>Academic Appeal?</label><select id="_AcademicAppealNeeded_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_AcademicAppealNeeded\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
                         '<div class="field"><label>Room Deposit?</label><select id="_PaidRoomDeposit0_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_PaidRoomDeposit0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
@@ -403,6 +424,12 @@
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_RegisteredForClasses\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
+
+                        '<div class="field"><label>Online Orient?</label><select id="_OnlineOrientationSeminarComplete_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_OnlineOrientationSeminarComplete\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
                         '<div class="field"><label>PT Form?</label><select id="_FilledoutPTQuestionnaire0_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_FilledoutPTQuestionnaire0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
@@ -419,6 +446,27 @@
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_FilledOutImmunizationForm0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
+
+                        '<div class="field"><label>Final HS Tran?</label><select id="_FinalHighSchoolTranscriptsReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinalHighSchoolTranscriptsReceived\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
+                        '<div class="field"><label>Final Clg Tran 1</label><select id="_FinalCollege1TranscriptReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinalCollege1TranscriptReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
+                        '<div class="field"><label>Final Clg Tran 2</label><select id="_FinalCollege2TranscriptReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinalCollege1TranscriptReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
+                        '<div class="field"><label>Final Clg Tran 3</label><select id="_FinalCollege3TranscriptReceived_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinalCollege3TranscriptReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
                         '<div class="field"><label>FAFSA?</label><select id="_AppliedforFAFSA_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_AppliedforFAFSA\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
@@ -427,6 +475,17 @@
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_CompletedVFAOStudentInterview\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
+
+                        '<div class="field"><label>Fin Aid Verify?</label><select id="_FinancialAidVerification_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinancialAidVerification\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+                        '<div class="field"><label>Fin Aid Complete?</label><select id="_FinancialAidComplete_input">' +
+                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinancialAidComplete\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '</select></div>' +
+
+
                         '<div class="field"><label>Applied for loans?</label><select id="_AppliedforStudentLoansoptional_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
                         '<option :selected="ddlSelected(n,\'_AppliedforStudentLoansoptional\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +

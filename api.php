@@ -2,25 +2,31 @@
 include 'global.php';
 
 
-function checkPass()
-{
+function checkPass() {
     return "13Saul56";
 }
 
 //get all contacts from Infusionsoft
-function getContacts()
-{
-    $contactFields = array('Id','FirstName','LastName','_ProgramInterestedIn0','OwnerID','_PaidAppFee','_PersonalReference','_PasterReferenceReceived',
-        '_HighSchoolTranscriptReceived','_MostRecentCollegeTranscriptsReceived','_CollegeTranscript2Received','_College3TranscriptsReceived','_PaidRoomDeposit0',
-        '_RegisteredForClasses','_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire','_SentArrivalInformation0','_FilledOutImmunizationForm0',
-        '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional','_SentEmergencyContactInformation','_JoinedFacebook',
-        '_AdditionalItemsNeeded','_AdditionalItems','_TeacherEmployerReferenceReceived');
+function getContacts() {
+  // ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+  // '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
+  // '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+  // '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
+  // '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+  // '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
+
+    $contactFields = array('Id','LastName','FirstName', '_ProgramInterestedIn0','OwnerID', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+    '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
+    '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+    '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
+    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+    '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems');
+
     $allDBContacts= recursiveFetchData("Contact",array('FirstName'=>'%'),$contactFields);
     return $allDBContacts;
 }
 
-function getStages($stageTye)
-{
+function getStages($stageTye) {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
     //refer to the file "test_data/allstages.json" to see what Stages these ID's belong to
     $stageIds = array('39','41','43','51','57','59','61','63','80','82','84','86','88','98','100','102','106','108','110' );
@@ -51,14 +57,12 @@ function getStages($stageTye)
     return $filterStages;
 }
 
-function getUsers()
-{
+function getUsers() {
     $users = recursiveFetchData("User",array("Id"=>"%"),array("Id", "FirstName","LastName"));
     return $users;
 }
 
-function createContactsArray()
-{
+function createContactsArray() {
     $contacts = getContacts();
     $stages = getStages();
     $users = getUsers();
@@ -113,13 +117,8 @@ function createContactsArray()
     return $filteredContactArray;
 }
 
-function updateContact()
-{
-    /*['FirstName', 'LastName', '_ProgramInterestedIn0', 'StageName', 'OwnerName', '_PaidAppFee', '_PersonalReference','_PasterReferenceReceived',
-                    '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-                    '_College3TranscriptsReceived', '_PaidRoomDeposit0', '_RegisteredForClasses', '_FilledoutPTQuestionnaire0','_FilledOutRoommateQuestionnaire',
-                    '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_AppliedforFAFSA','_CompletedVFAOStudentInterview','_AppliedforStudentLoansoptional',
-                    '_SentEmergencyContactInformation', '_JoinedFacebook','_AdditionalItemsNeeded','_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id']*/
+function updateContact() {
+
     global $key;
     $contactID= (int)$_REQUEST["Id"];
     $leadID = (int)$_REQUEST["LeadID"];
@@ -132,11 +131,15 @@ function updateContact()
         "_PaidAppFee" => $_REQUEST["_PaidAppFee"],"_PersonalReference" => $_REQUEST["_PersonalReference"],"_PasterReferenceReceived" => $_REQUEST["_PasterReferenceReceived"],
         "_TeacherEmployerReferenceReceived" => $_REQUEST["_TeacherEmployerReferenceReceived"],"_HighSchoolTranscriptReceived" => $_REQUEST["_HighSchoolTranscriptReceived"],
         "_MostRecentCollegeTranscriptsReceived" => $_REQUEST["_MostRecentCollegeTranscriptsReceived"],"_CollegeTranscript2Received" => $_REQUEST["_CollegeTranscript2Received"],
-        "_College3TranscriptsReceived" => $_REQUEST["_College3TranscriptsReceived"],"_PaidRoomDeposit0" => $_REQUEST["_PaidRoomDeposit0"],
-        "_RegisteredForClasses" => $_REQUEST["_RegisteredForClasses"],"_FilledoutPTQuestionnaire0" => $_REQUEST["_FilledoutPTQuestionnaire0"],
+        "_College3TranscriptsReceived" => $_REQUEST["_College3TranscriptsReceived"],"_PhotoIDReceived" => $_REQUEST["_PhotoIDReceived"],
+        "_PaidRoomDeposit0" => $_REQUEST["_PaidRoomDeposit0"],"_AcademicAppealNeeded" => $_REQUEST["_AcademicAppealNeeded"],
+        "_RegisteredForClasses" => $_REQUEST["_RegisteredForClasses"],"_OnlineOrientationSeminarComplete" => $_REQUEST["_OnlineOrientationSeminarComplete"],"_FilledoutPTQuestionnaire0" => $_REQUEST["_FilledoutPTQuestionnaire0"],
         "_FilledOutRoommateQuestionnaire" => $_REQUEST["_FilledOutRoommateQuestionnaire"],"_SentArrivalInformation0" => $_REQUEST["_SentArrivalInformation0"],
-        "_FilledOutImmunizationForm0" => $_REQUEST["_FilledOutImmunizationForm0"],"_AppliedforFAFSA" => $_REQUEST["_AppliedforFAFSA"],
-        "_CompletedVFAOStudentInterview" => $_REQUEST["_CompletedVFAOStudentInterview"],"_AppliedforStudentLoansoptional" => $_REQUEST["_AppliedforStudentLoansoptional"],
+        "_FilledOutImmunizationForm0" => $_REQUEST["_FilledOutImmunizationForm0"],"_FinalHighSchoolTranscriptsReceived" => $_REQUEST["_FinalHighSchoolTranscriptsReceived"],
+        "_AppliedforFAFSA" => $_REQUEST["_AppliedforFAFSA"],"_FinalCollege1TranscriptReceived" => $_REQUEST["_FinalCollege1TranscriptReceived"],
+        "_FinalCollege2TranscriptReceived" => $_REQUEST["_FinalCollege2TranscriptReceived"],"_FinalCollege3TranscriptReceived" => $_REQUEST["_FinalCollege3TranscriptReceived"],
+        "_CompletedVFAOStudentInterview" => $_REQUEST["_CompletedVFAOStudentInterview"],"_FinancialAidVerification" => $_REQUEST["_FinancialAidVerification"],
+        "_FinancialAidComplete" => $_REQUEST["_FinancialAidComplete"],"_AppliedforStudentLoansoptional" => $_REQUEST["_AppliedforStudentLoansoptional"],
         "_SentEmergencyContactInformation" => $_REQUEST["_SentEmergencyContactInformation"],"_JoinedFacebook" => $_REQUEST["_JoinedFacebook"],
         "_AdditionalItemsNeeded" => $_REQUEST["_AdditionalItemsNeeded"],"_AdditionalItems" => $_REQUEST["_AdditionalItems"],
     );
@@ -164,8 +167,8 @@ function updateContact()
 }
 
 
-if(isset($_REQUEST['query']))
-{
+if(isset($_REQUEST['query'])) {
+  
     if($_REQUEST['query']=="getContacts") {
         //$time_start = microtime(true);
         echo json_encode(createContactsArray());
