@@ -36,7 +36,6 @@ function contactSave(record, vm) {
         }
     }
 
-
     contact.query = "saveContact";
     contact.Id = record.Id;
     contact.LeadID = record.LeadID;
@@ -66,8 +65,7 @@ function contactSave(record, vm) {
         var contactFields = Object.keys(contact);
         for (var i = 0; i < contactFields.length; i++) {
             var fieldName = contactFields[i]
-            //Vue.set(vm.gridData[n],fieldName,contact[fieldName])
-            vm.gridData[n][fieldName] = contact[fieldName];
+            Vue.set(vm.gridData[n],fieldName,contact[fieldName])
         }
 
     }).fail(function (xhr, statusText, error) {
