@@ -10,47 +10,54 @@
 
 <div id="app" style="display:none">
     <!--<pre>{{$data | json }}</pre>-->
-    <div class="filterFields">
-        <input id="searchBox" placeholder="Search" v-model="searchQuery">
-        <select class="ddlFilter" v-model="progFilter">
-            <option class="pink" value="">Program</option>
-            <option v-for="n of progCategories" :value="n.category">{{ n.category }}</option>
-        </select>
 
-        <select class="ddlFilter" v-model="ownerFilter">
-            <option class="pink" value="">Owner</option>
-            <option v-for="n of owners" :value="n.FirstName + ' ' + n.LastName">{{n.FirstName}} {{n.LastName }}</option>
-        </select>
-        <div id="rowCount">Total Rows: {{filteredResults.length}}</div>
-    </div>
+    <div id="main-container">
 
-    <div style="">
-    <div id="header">
-        <div class="hcell" v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th')">
+      <div class="filterFields">
+          <input id="searchBox" placeholder="Search" v-model="searchQuery">
+          <select class="ddlFilter" v-model="progFilter">
+              <option class="pink" value="">Program</option>
+              <option v-for="n of progCategories" :value="n.category">{{ n.category }}</option>
+          </select>
+
+          <select class="ddlFilter" v-model="ownerFilter">
+              <option class="pink" value="">Owner</option>
+              <option v-for="n of owners" :value="n.FirstName + ' ' + n.LastName">{{n.FirstName}} {{n.LastName }}</option>
+          </select>
+          <div id="rowCount">Total Rows: {{filteredResults.length}}</div>
+      </div>
+
+      <div id="header">
+        <div class="hcell" v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th',field)">
             {{ headerNames[index] }}
             <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
         </div>
+      </div>
+
+      <div id="table-container">
+        <table>
+
+            <!-- <thead>
+            <tr>
+                <th v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th',field)">
+                    {{ headerNames[index] }}
+                    <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
+                </th>
+            </tr>
+            </thead> -->
+
+            <tbody>
+            <tr v-for="record of filteredResults">
+                <td v-html="fieldValue(record,field)" title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record,field)" :class="cellClass(index,field,'td',record)" >
+                </td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+
     </div>
-    </div>
 
-    <table>
 
-        <thead>
-        <tr>
-            <th v-for="(field, index) of displayFields" @click="sortBy(field)" :class="cellClass(index,field,'th',field)">
-                {{ headerNames[index] }}
-                <span class="arrow" :class="order > 0 ? 'asc' : 'dsc'"></span>
-            </th>
-        </tr>
-        </thead>
-
-        <tbody>
-        <tr v-for="record of filteredResults">
-            <td v-html="fieldValue(record,field)" title="Click To Edit" v-for="(field, index) of displayFields" @click="editRecord(record,field)" :class="cellClass(index,field,'td',record)" >
-            </td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 
 

@@ -7,7 +7,7 @@ body {
 
 .pink{background-color:rgba(255, 153, 128, 0.49);}
 
-.filterFields{margin:100px 0 10px 0;}
+.filterFields{margin:10px 0 10px 0;}
 .filterFields input, .filterFields select
 {
     height: 36px;
@@ -35,8 +35,16 @@ body {
   float: right;
 }
 
-table {
-    background-color: #fff;
+#main-container
+{
+    min-width: 2369px;
+    overflow: hidden;
+}
+
+#header {
+    overflow: hidden;
+    margin-left: 1px;
+    border-bottom: 10px solid rgba(51, 51, 51, 0.5);
 }
 
 .hcell {
@@ -50,15 +58,8 @@ table {
     float:left;
     height: 50px;
     font-weight: bold;
-    border: 1px solid white;
+    border-right: 1px solid white;
 
-}
-
-#header
-{
-    width: 1865px;
-    overflow: hidden;
-    margin-left: 1px;
 }
 
 .hcell.active {
@@ -74,6 +75,16 @@ table {
 .hcell.three{background-color: #b6a19e;width:45px;}
 
 
+#table-container {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+
+table {
+    background-color: #fff;
+}
+
 td {
     padding: 5px 5px;
     font-size: 12px;
@@ -81,12 +92,12 @@ td {
     cursor:pointer !important;
 }
 
+td.one{width:127px;}
+td.two{width:47px;}
+td.three{width:48px;}
+
 td.green{background-color: rgba(88, 255, 0, 0.35)}
 td.red{background-color: rgba(255, 153, 128, 0.49)}
-
-td.one{min-width:120px;}
-td.two{min-width:45px;}
-td.three{min-width:45px;}
 
 
 .arrow {
@@ -114,8 +125,7 @@ td.three{min-width:45px;}
     margin-bottom: 10px;
 }
 
-.editBtn
-{
+.editBtn {
     text-align: center;
     cursor:pointer;
     background-color: #cdcdcd;
