@@ -152,14 +152,14 @@
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
                     '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
                     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-                    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+                    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
                     '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
                 gridData: [],
                 headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
                     'Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Photo Id','Acdmc Appeal', 'Room Depo', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
-                    'Immun Form', 'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FAFSA Apply','VFAO Intrvw','Fin Aid Verify',
-                    'Fin Aid Complete', 'Apply Loans', 'Emrgcy Cont Info', 'Reg. Class','Online Orient', 'Join FB Group','Adtnl Items Need?','Adtnl Items'],
+                    'Immun Form', 'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FAFSA Apply','VFAO Intrvw','Fin Aid Final',
+                    'Apply Loans', 'Emrgcy Cont Info', 'Reg. Class','Online Orient', 'Join FB Group','Adtnl Items Need?','Adtnl Items'],
                 owners:[],
                 programs:programs,
                 progCategories:progCategories,
@@ -219,7 +219,7 @@
                     return data
                 },
                 displayFields: function () {
-                    //remove as many fields from the "fields" variable that you dont want displayed
+                    //remove as many fields from the end of "fields" variable that you dont want displayed
                     return this.fields.slice(0, this.fields.length - 4)
                 }
             },
@@ -227,10 +227,10 @@
                 //get all Contacts from Infusionsoft
                 $.ajax({
                     type: 'POST',
-                    url: './test_data/contact.json', // ./test_data/contact.json
+                    url: 'api.php', // ./test_data/contact.json
                     data: "query=getContacts"
                 }).done(function (response) {
-                    var contactdata = response// JSON.parse(response)
+                    var contactdata = JSON.parse(response)// JSON.parse(response)
                     $('#app').show();
                     vm.gridData = contactdata
                     swal.close()
@@ -311,7 +311,7 @@
                     if (index >= 5 && index < 15) {
                         classPos = " two";
                     }
-                    if (index >= 15 && index < 35) {
+                    if (index >= 15 && index < 34) {
                         classPos = " three";
                     }
                     return classColor+classPos+classActive;
@@ -371,7 +371,7 @@
 // '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
 // '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
 // '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-// '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+// '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
 // '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
                         html: '<form id="editForm" method="post" action="gridview.php">' +
                         '<div class="field"><label>First Name</label><input type="text" id="FirstName_input" :value="formData[r].FirstName"></div>' +
@@ -494,13 +494,9 @@
                         '<option :selected="ddlSelected(n,\'_CompletedVFAOStudentInterview\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
 
-                        '<div class="field"><label>Fin Aid Verify?</label><select id="_FinancialAidVerification_input">' +
+                        '<div class="field"><label>Fin Aid Final?</label><select id="_FinancialAidFinalized_input">' +
                         '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="ddlSelected(n,\'_FinancialAidVerification\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
-                        '</select></div>' +
-                        '<div class="field"><label>Fin Aid Complete?</label><select id="_FinancialAidComplete_input">' +
-                        '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-                        '<option :selected="ddlSelected(n,\'_FinancialAidComplete\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                        '<option :selected="ddlSelected(n,\'_FinancialAidFinalized\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
                         '</select></div>' +
 
 

@@ -5,9 +5,9 @@ body {
     color: #444;
 }
 
-.pink{background-color:rgba(255, 153, 128, 0.49);}
+.pink{background-color:#fcccb0;}
 
-.filterFields{margin:10px 0 10px 0;}
+.filterFields{margin:10px 0 10px 0; overflow: hidden;}
 .filterFields input, .filterFields select
 {
     height: 36px;
@@ -20,37 +20,40 @@ body {
     width: 500px;
     padding: 10px;
     font-size: 24px;
+    float: left;
 }
 
 .ddlFilter{
     width: 200px;
     font-size: 18px;
+    float: left;
 }
 
 #rowCount {
   height: 20px;
   width: 130px;
   padding: 10px 10px;
-  background-color: rgba(88, 255, 0, 0.35);
-  float: right;
+  background-color: #afddcd;
+  float: left;
+  margin-left:100px;
 }
 
 #main-container
 {
-    min-width: 2369px;
+    min-width: 2296px;
     overflow: hidden;
 }
 
 #header {
     overflow: hidden;
     margin-left: 1px;
-    border-bottom: 10px solid rgba(51, 51, 51, 0.5);
+    border-bottom: 10px solid #e6e7e8;
 }
 
 .hcell {
     padding: 10px 5px;
     font-size: 14px;
-    color: #7c7b7b;
+    color: #e6e7e8;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -70,9 +73,9 @@ body {
     opacity: 1;
 }
 
-.hcell.one{background-color: #c7d8c6;width:120px;}
-.hcell.two{background-color: #efd9c1;width:45px;}
-.hcell.three{background-color: #b6a19e;width:45px;}
+.hcell.one{background-color: #434345;width:120px;}
+.hcell.two{background-color: #182a5b;width:45px;}
+.hcell.three{background-color: #481550;width:45px;}
 
 
 #table-container {
@@ -88,16 +91,16 @@ table {
 td {
     padding: 5px 5px;
     font-size: 12px;
-    background-color: #f7f2f2;
+    background-color: #e6e7e8;
     cursor:pointer !important;
 }
 
-td.one{width:127px;}
-td.two{width:47px;}
-td.three{width:48px;}
+td.one{min-width: 119px;}
+td.two{min-width: 44px;}
+td.three{min-width: 44px;}
 
-td.green{background-color: rgba(88, 255, 0, 0.35)}
-td.red{background-color: rgba(255, 153, 128, 0.49)}
+td.green{background-color: #afddcd;}
+td.red{background-color: #fcccb0;}
 
 
 .arrow {

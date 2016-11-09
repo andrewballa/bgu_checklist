@@ -12,14 +12,14 @@ function getContacts() {
   // '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
   // '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
   // '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-  // '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+  // '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
   // '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
     $contactFields = array('Id','LastName','FirstName', '_ProgramInterestedIn0','OwnerID', '_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
     '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidVerification','_FinancialAidComplete','_AppliedforStudentLoansoptional',
+    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
     '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems');
 
     $allDBContacts= recursiveFetchData("Contact",array('FirstName'=>'%'),$contactFields);
@@ -138,8 +138,8 @@ function updateContact() {
         "_FilledOutImmunizationForm0" => $_REQUEST["_FilledOutImmunizationForm0"],"_FinalHighSchoolTranscriptsReceived" => $_REQUEST["_FinalHighSchoolTranscriptsReceived"],
         "_AppliedforFAFSA" => $_REQUEST["_AppliedforFAFSA"],"_FinalCollege1TranscriptReceived" => $_REQUEST["_FinalCollege1TranscriptReceived"],
         "_FinalCollege2TranscriptReceived" => $_REQUEST["_FinalCollege2TranscriptReceived"],"_FinalCollege3TranscriptReceived" => $_REQUEST["_FinalCollege3TranscriptReceived"],
-        "_CompletedVFAOStudentInterview" => $_REQUEST["_CompletedVFAOStudentInterview"],"_FinancialAidVerification" => $_REQUEST["_FinancialAidVerification"],
-        "_FinancialAidComplete" => $_REQUEST["_FinancialAidComplete"],"_AppliedforStudentLoansoptional" => $_REQUEST["_AppliedforStudentLoansoptional"],
+        "_CompletedVFAOStudentInterview" => $_REQUEST["_CompletedVFAOStudentInterview"],"_FinancialAidFinalized" => $_REQUEST["_FinancialAidFinalized"],
+        "_AppliedforStudentLoansoptional" => $_REQUEST["_AppliedforStudentLoansoptional"],
         "_SentEmergencyContactInformation" => $_REQUEST["_SentEmergencyContactInformation"],"_JoinedFacebook" => $_REQUEST["_JoinedFacebook"],
         "_AdditionalItemsNeeded" => $_REQUEST["_AdditionalItemsNeeded"],"_AdditionalItems" => $_REQUEST["_AdditionalItems"],
     );
