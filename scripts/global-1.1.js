@@ -77,3 +77,13 @@ function contactSave(record, vm) {
         })
     })
 }
+
+function sortList(list,sortfield,order)
+{
+  list = list.slice().sort(function (a, b) {
+      a = a[sortfield]
+      b = b[sortfield]
+      return (a === b ? 0 : a > b ? 1 : -1) * order
+  })
+  return list
+}

@@ -35,12 +35,12 @@ body {
   padding: 10px 10px;
   background-color: #afddcd;
   float: left;
-  margin-left:100px;
+  margin-left:40px;
 }
 
 #main-container
 {
-    min-width: 2296px;
+    min-width: 2242px;
     overflow: hidden;
 }
 
@@ -66,7 +66,7 @@ body {
 }
 
 .hcell.active {
-    color: #fff;
+    color: #afddcd;
 }
 
 .hcell.active .arrow {
@@ -129,14 +129,6 @@ td.red{background-color: #fcccb0;}
     margin-bottom: 10px;
 }
 
-.editBtn {
-    text-align: center;
-    cursor:pointer;
-    background-color: #cdcdcd;
-}
-
-.editHeader{background-color: #66ab8c;}
-
 
 .field
 {
@@ -162,6 +154,23 @@ td.red{background-color: #fcccb0;}
     font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 
+.edit_field_focus{
+  border:2px solid yellow;
+}
+
+.float input, .float select
+{
+  float: left;
+  width: 90%;
+  height: 30px;
+}
+
+#userinfo{overflow:hidden;}
+#userinfo .float{
+  float: left;
+    width: 30%;
+  }
+
 #appSteps {
     font-size: 12px;
     overflow: hidden;
@@ -175,7 +184,7 @@ td.red{background-color: #fcccb0;}
 #appSteps .field label {
     text-align: left;
 }
-#appSteps .field select {
+#appSteps .field select,#appSteps .field input {
     float: left;
     font-size: 12px;
 }
