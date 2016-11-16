@@ -15,19 +15,29 @@
 
       <div class="filterFields">
           <input id="searchBox" placeholder="Search" v-model="searchQuery">
-          <select class="ddlFilter" v-model="progFilter">
+          <select class="ddlFilter wide" v-model="progFilter">
               <option class="pink" value="">Program</option>
               <option v-for="n of progCategories" :value="n.category">{{ n.category }}</option>
           </select>
 
-          <select class="ddlFilter" v-model="stageFilter">
+          <select class="ddlFilter wide" v-model="stageFilter">
               <option class="pink" value="">Stage</option>
               <option v-for="n of stages" :value="n.StageName">{{n.StageName}}</option>
           </select>
 
-          <select class="ddlFilter" v-model="ownerFilter">
+          <select class="ddlFilter wide" v-model="ownerFilter">
               <option class="pink" value="">Owner</option>
               <option v-for="n of owners" :value="n.FirstName + ' ' + n.LastName">{{n.FirstName}} {{n.LastName }}</option>
+          </select>
+
+          <select class="ddlFilter narrow" v-model="yearFilter">
+              <option class="pink" value="">Year</option>
+              <option v-for="n of years" :value="n">{{n}}</option>
+          </select>
+
+          <select class="ddlFilter narrow" v-model="semesterFilter">
+              <option class="pink" value="">Semester</option>
+              <option v-for="n of semesters" :value="n">{{n}}</option>
           </select>
 
           <div id="rowCount">Total Rows: {{filteredResults.length}}</div>
@@ -152,6 +162,8 @@
                 progFilter:'',
                 ownerFilter:'',
                 stageFilter:'',
+                yearFilter:'',
+                semesterFilter:'',
                 fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
                     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
                     '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
@@ -168,6 +180,8 @@
                 owners:[],
                 programs:programs,
                 stages:[],
+                years:years,
+                semesters:semesters,
                 progCategories:progCategories,
                 contactUrl:'https://hq171.infusionsoft.com/Contact/manageContact.jsp?view=edit&ID='
             },
@@ -177,22 +191,17 @@
                     var progFilter = this.progFilter && this.progFilter.toLowerCase()
                     var ownerFilter = this.ownerFilter && this.ownerFilter.toLowerCase()
                     var stageFilter = this.stageFilter.toLowerCase()
+                    var yearFilter = this.yearFilter
+                    var semesterFilter = this.semesterFilter.toLowerCase()
                     var sortfield = this.sortField
                     var order = this.order || 1
                     var data = this.gridData
 
-                    if (searchTerm) {
-                        data = filterTerm(searchTerm)
-                    }
-
-                    if (ownerFilter) {
-                        data = filterTerm(ownerFilter)
-                    }
-
-                    if(stageFilter){
-                      console.log('"'+stageFilter+'"')
-                        data = filterTerm(stageFilter)
-                    }
+                    if (searchTerm) { data = filterTerm(searchTerm) }
+                    if (ownerFilter) { data = filterTerm(ownerFilter) }
+                    if (stageFilter){ data = filterTerm(stageFilter) }
+                    if (yearFilter){ data = filterTerm(yearFilter) }
+                    if (semesterFilter){ data = filterTerm(semesterFilter) }
 
                     if (progFilter) {
                         var finalResult = [];
