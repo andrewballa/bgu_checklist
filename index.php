@@ -435,7 +435,7 @@
                             '</select></div>' +
                             '<div class="field"><label>Teacher/Employer Ref?</label><select id="_TeacherEmployerReferenceReceived_input">' +
                             '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-                            '<option :selected="ddlSelected(n,\'_TeacherEmployerReferenceReceived\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+                            '<option :selected="ddlSelected(n,\'_TeacherEmployerReferenceReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
                             '</select></div>' +
                             '<div class="field"><label>HS/GED Transcript?</label><select id="_HighSchoolTranscriptReceived_input">' +
                             '<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
