@@ -1,5 +1,5 @@
 <!--replace these dev libraries with prod versions-->
-<link rel="stylesheet" href="scripts/styles-1.1.css" type="text/css" media="screen"/>
+<link rel="stylesheet" href="scripts/styles-1.2.css" type="text/css" media="screen"/>
 <link rel="stylesheet" href="scripts/loader.css" type="text/css" media="screen"/>
 <link rel="stylesheet" href="scripts/sweetalert/sweetalert2.min.css" type="text/css"/>
 
