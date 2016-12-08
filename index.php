@@ -249,10 +249,10 @@
 				//get all Contacts from Infusionsoft
 				$.ajax({
 					type: 'POST',
-					url: './test_data/contact.json', // ./test_data/contact.json
+					url: 'api.php', // ./test_data/contact.json
 					data: "query=getContacts"
 				}).done(function (response) {
-					var contactdata = response// JSON.parse(response)
+					var contactdata = JSON.parse(response)// JSON.parse(response)
 					$('#app').show();
 					vm.gridData = contactdata
 					swal.close()
