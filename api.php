@@ -63,7 +63,7 @@ function createContactsArray() {
     $users = getUsers();
     $leads = recursiveFetchData("Lead",array('Id'=>'%'),array("Id","StageID","ContactID","UserID"));
 
-    //filter only the Leads that are in the Stages we want (stages that correspond to $stageIds)
+    //filter only the Leads that are in the Stages we want (these Stages are in getStages() function)
     $filteredLeads = null;
     foreach ($stages as $s)
     {
@@ -73,7 +73,6 @@ function createContactsArray() {
         }
     }
 
-    //echo "all cons" . count($allDBContacts) . '<br>';
     //filter only the Contacts that are Leads in Infusionsoft
     $filteredContactArray = null;
     $contactIdList = array_column($filteredLeads,'ContactID');
@@ -81,28 +80,20 @@ function createContactsArray() {
     foreach ($contactIdList as $cId)
     {
         $e= array_search($cId,array_column($contacts,'Id'));
-        //if($e!=""){
-            $contactRecord = $contacts[$e];
-        //}
+        $contactRecord = $contacts[$e];
 
         $r = array_search($cId,array_column($filteredLeads,'ContactID'));
-        //if($r!="") {
-            $lead = $filteredLeads[$r];
-            $contactRecord += array("LeadID" => $lead['Id']);
+        $lead = $filteredLeads[$r];
+        $contactRecord += array("LeadID" => $lead['Id']);
 
-            $j = array_search($lead['StageID'],array_column($stages,'Id'));
-            //if($j!="") {
-                $contactRecord += array("StageName" => $stages[$j]["StageName"]);
-                $contactRecord += array("StageID" => $stages[$j]["Id"]);
-            //}
-        //}
-
+        $j = array_search($lead['StageID'],array_column($stages,'Id'));
+        $contactRecord += array("StageName" => $stages[$j]["StageName"]);
+        $contactRecord += array("StageID" => $stages[$j]["Id"]);
 
         $n = array_search($contactRecord['OwnerID'], array_column($users, 'Id'));
         if($n!=""){
             $contactRecord+=array("OwnerName"=>$users[$n]['FirstName'] . " " . $users[$n]['LastName']);
         }
-        //$contactRecord+=array("OwnerID"=>$contactRecord['OwnerID']);
 
 
         $filteredContactArray[] = $contactRecord; //push this contact into the filtered array
