@@ -164,6 +164,9 @@
 				stageFilter:'',
 				yearFilter:'',
 				semesterFilter:'',
+
+				//**IMPORTANT** Add new fields ONLY before the LeadID field and not anywhere else in the middle or end of this array!!
+				//							Otherwise it will mess up the ordering of the fields used elsewhere in the code!
 				fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
 					'_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
 					'_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
