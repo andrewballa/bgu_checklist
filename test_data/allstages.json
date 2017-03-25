@@ -1,207 +1,150 @@
 [
   {
     "StageName": "BGU - Lead",
-    "Id": 37,
-    "StageOrder": 30
+    "Id": 37
   },
   {
     "StageName": "BGU - New Applicant",
-    "Id": 39,
-    "StageOrder": 40
+    "Id": 39
   },
   {
     "StageName": "BGU - Accepted Applicant",
-    "Id": 41,
-    "StageOrder": 50
+    "Id": 41
   },
   {
-    "StageName": "BGU - Accepted Paid Applicant",
-    "Id": 43,
-    "StageOrder": 60
+    "StageName": "BGU - Accepted  Paid Applicant",
+    "Id": 43
   },
   {
     "StageName": "BGU - Enrolled",
-    "Id": 45,
-    "StageOrder": 70
+    "Id": 45
   },
   {
     "StageName": "BGU - Not Interested\/Withdrawn",
-    "Id": 47,
-    "StageOrder": 80
+    "Id": 47
   },
   {
     "StageName": "BGU - Applicant Denied",
-    "Id": 49,
-    "StageOrder": 90
+    "Id": 49
   },
   {
     "StageName": "BGU - Applicant",
-    "Id": 51,
-    "StageOrder": 45
+    "Id": 51
   },
   {
     "StageName": "LEAD - Lead",
-    "Id": 55,
-    "StageOrder": 210
+    "Id": 55
   },
   {
     "StageName": "LEAD - New Applicant",
-    "Id": 57,
-    "StageOrder": 220
+    "Id": 57
   },
   {
     "StageName": "LEAD - Applicant",
-    "Id": 59,
-    "StageOrder": 230
+    "Id": 59
   },
   {
     "StageName": "LEAD - Accepted Applicant",
-    "Id": 61,
-    "StageOrder": 240
+    "Id": 61
   },
   {
     "StageName": "LEAD - Accepted Paid Applicant",
-    "Id": 63,
-    "StageOrder": 250
+    "Id": 63
   },
   {
     "StageName": "LEAD - Enrolled",
-    "Id": 65,
-    "StageOrder": 260
+    "Id": 65
   },
   {
     "StageName": "LEAD - Not Interested\/Withdraw",
-    "Id": 67,
-    "StageOrder": 270
+    "Id": 67
   },
   {
     "StageName": "LEAD - Applicant Denied",
-    "Id": 69,
-    "StageOrder": 280
+    "Id": 69
   },
   {
     "StageName": "BGU - Future Interest",
-    "Id": 70,
-    "StageOrder": 75
+    "Id": 70
   },
   {
     "StageName": "LEAD - Future Interest",
-    "Id": 72,
-    "StageOrder": 265
+    "Id": 72
   },
   {
     "StageName": "BGU - Inactive",
-    "Id": 74,
-    "StageOrder": 85
+    "Id": 74
   },
   {
     "StageName": "LEAD - Inactive",
-    "Id": 76,
-    "StageOrder": 267
+    "Id": 76
   },
   {
     "StageName": "GS - Lead",
-    "Id": 78,
-    "StageOrder": 310
+    "Id": 78
   },
   {
     "StageName": "GS - New Applicant",
-    "Id": 80,
-    "StageOrder": 320
+    "Id": 80
   },
   {
     "StageName": "GS - Applicant",
-    "Id": 82,
-    "StageOrder": 330
+    "Id": 82
   },
   {
     "StageName": "GS - Accepted Applicant",
-    "Id": 84,
-    "StageOrder": 340
+    "Id": 84
   },
   {
     "StageName": "GS - Accepted Paid Applicant",
-    "Id": 86,
-    "StageOrder": 350
+    "Id": 86
   },
   {
     "StageName": "GS - Student",
-    "Id": 88,
-    "StageOrder": 360
+    "Id": 88
   },
   {
     "StageName": "GS - Future Interest",
-    "Id": 90,
-    "StageOrder": 365
+    "Id": 90
   },
   {
     "StageName": "GS - Not Interested\/Withdrawn",
-    "Id": 92,
-    "StageOrder": 370
+    "Id": 92
   },
   {
     "StageName": "GS - Inactive",
-    "Id": 94,
-    "StageOrder": 375
+    "Id": 94
   },
   {
     "StageName": "GS - Applicant Denied",
-    "Id": 96,
-    "StageOrder": 380
+    "Id": 96
   },
   {
     "StageName": "BGU - Applicant Complete",
-    "Id": 98,
-    "StageOrder": 47
+    "Id": 98
   },
   {
     "StageName": "LEAD - Applicant Complete",
-    "Id": 100,
-    "StageOrder": 235
+    "Id": 100
   },
   {
     "StageName": "GS - Applicant Complete",
-    "Id": 102,
-    "StageOrder": 335
+    "Id": 102
   },
   {
     "StageName": "GS - Enrolled",
-    "Id": 104,
-    "StageOrder": 390
+    "Id": 104
   },
   {
     "StageName": "BGU - New Accepted Applicant",
-    "Id": 106,
-    "StageOrder": 48
+    "Id": 106
   },
   {
     "StageName": "LEAD - New Accepted Applicant",
-    "Id": 108,
-    "StageOrder": 237
+    "Id": 108
   },
   {
     "StageName": "GS - New Accepted Applicant",
-    "Id": 110,
-    "StageOrder": 337
-  },
-  {
-    "StageName": "BGU - App Complete - In Proces",
-    "Id": 112,
-    "StageOrder": 49
-  },
-  {
-    "StageName": "BGU - Submitted for Review",
-    "Id": 114,
-    "StageOrder": 47
-  },
-  {
-    "StageName": "LEAD - Submitted for Review",
-    "Id": 116,
-    "StageOrder": 236
-  },
-  {
-    "StageName": "GS - Submitted for Review",
-    "Id": 118,
-    "StageOrder": 336
+    "Id": 110
   }
 ]

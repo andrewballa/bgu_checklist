@@ -1,0 +1,22 @@
+INFUSIONSOFT API ERROR MESSAGE: 2017-02-09 20:23:06
+Didn't receive 200 OK from remote server. (HTTP/1.1 502 Bad Gateway)
+
+DataService.query
+
+array (
+  0 => '1fb3245bda5f2517cf678c1cf28946a1',
+  1 => 'Lead',
+  2 => 1000,
+  3 => 7,
+  4 => 
+  array (
+    'Id' => '%',
+  ),
+  5 => 
+  array (
+    0 => 'Id',
+    1 => 'StageID',
+    2 => 'ContactID',
+    3 => 'UserID',
+  ),
+)

@@ -1,0 +1,44 @@
+INFUSIONSOFT API ERROR MESSAGE: 2016-10-28 18:57:40
+[NoFieldFound]No field found: Contact._EnrolledInClasses0
+
+DataService.query
+
+array (
+  0 => '1fb3245bda5f2517cf678c1cf28946a1',
+  1 => 'Contact',
+  2 => 1000,
+  3 => 0,
+  4 => 
+  array (
+    'FirstName' => '%',
+  ),
+  5 => 
+  array (
+    0 => 'Id',
+    1 => 'FirstName',
+    2 => 'LastName',
+    3 => '_ProgramInterestedIn0',
+    4 => 'OwnerID',
+    5 => '_PaidAppFee',
+    6 => '_PersonalReference',
+    7 => '_PasterReferenceReceived',
+    8 => '_HighSchoolTranscriptReceived',
+    9 => '_MostRecentCollegeTranscriptsReceived',
+    10 => '_CollegeTranscript2Received',
+    11 => '_College3TranscriptsReceived',
+    12 => '_PaidRoomDeposit0',
+    13 => '_EnrolledInClasses0',
+    14 => '_FilledoutPTQuestionnaire0',
+    15 => '_FilledOutRoommateQuestionnaire',
+    16 => '_SentArrivalInformation0',
+    17 => '_FilledOutImmunizationForm0',
+    18 => '_AppliedforFAFSA',
+    19 => '_CompletedVFAOStudentInterview',
+    20 => '_AppliedforStudentLoansoptional',
+    21 => '_SentEmergencyContactInformation',
+    22 => '_JoinedFacebook',
+    23 => '_AdditionalItemsNeeded',
+    24 => '_AdditionalItems',
+    25 => '_TeacherEmployerReferenceReceived',
+  ),
+)

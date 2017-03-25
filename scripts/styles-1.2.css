@@ -42,7 +42,7 @@ body {
 
 #main-container
 {
-    min-width: 2242px;
+    min-width: 2678px;
     overflow: hidden;
 }
 
@@ -76,8 +76,8 @@ body {
 }
 
 .hcell.one{background-color: #434345;width:120px;}
-.hcell.two{background-color: #182a5b;width:45px;}
-.hcell.three{background-color: #481550;width:45px;}
+.hcell.two{background-color: #182a5b;width:61px;}
+.hcell.three{background-color: #481550;width:46px;}
 
 
 #table-container {
@@ -99,8 +99,8 @@ td {
 }
 
 td.one{min-width: 119px;}
-td.two{min-width: 44px;}
-td.three{min-width: 44px;}
+td.two{min-width: 60px;}
+td.three{min-width: 45px;}
 
 td.green{background-color: #afddcd;}
 td.red{background-color: #fcccb0;}
@@ -197,4 +197,9 @@ td.red{background-color: #fcccb0;}
     padding-left: 5px;
     font-size: 18px;
     font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+
+#_DateofApplicationComplete
+{
+    font-size: 10px;
 }

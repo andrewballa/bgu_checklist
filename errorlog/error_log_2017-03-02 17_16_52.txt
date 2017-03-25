@@ -1,0 +1,46 @@
+INFUSIONSOFT API ERROR MESSAGE: 2017-03-02 17:16:52
+[InvalidConfig]Invalid Configuration: for help setting up your API, please contact Support (1-866-800-0004 ext. 2)
+
+ContactService.update
+
+array (
+  0 => '1fb3245bda5f2517cf678c1cf28946a1',
+  1 => 46930,
+  2 => 
+  array (
+    'FirstName' => 'Meghan',
+    'LastName' => 'Haupers',
+    '_ProgramInterestedIn0' => 'BA Intercultural Ministry Studies and Bible and Theology',
+    'OwnerID' => '46848',
+    '_YearAppliedFor' => '2017 ',
+    '_SemesterQuadAppliedFor' => NULL,
+    '_PersonalInfoReceived' => 'No',
+    '_PaidAppFee' => 'No',
+    '_PersonalReference' => 'Yes',
+    '_PasterReferenceReceived' => 'No',
+    '_TeacherEmployerReferenceReceived' => 'No',
+    '_HighSchoolTranscriptReceived' => 'No',
+    '_MostRecentCollegeTranscriptsReceived' => 'Not Needed',
+    '_CollegeTranscript2Received' => 'Not Needed',
+    '_College3TranscriptsReceived' => 'Not Needed',
+    '_PreliminaryApplicationReceived' => NULL,
+    '_PhotoIDReceived' => 'Yes',
+    '_PaidRoomDeposit0' => NULL,
+    '_AcademicAppealNeeded' => 'Not Needed',
+    '_RegisteredForClasses' => 'No',
+    '_OnlineOrientationSeminarComplete' => 'No',
+    '_FilledoutPTQuestionnaire0' => NULL,
+    '_FilledOutRoommateQuestionnaire' => NULL,
+    '_SentArrivalInformation0' => NULL,
+    '_FinalHighSchoolTranscriptsReceived' => 'No',
+    '_AppliedforFAFSA' => 'Not Needed',
+    '_FinalCollege1TranscriptReceived' => 'No',
+    '_FinalCollege2TranscriptReceived' => 'No',
+    '_FinalCollege3TranscriptReceived' => 'Not Needed',
+    '_CompletedVFAOStudentInterview' => 'Not Needed',
+    '_FinancialAidFinalized' => 'Not Needed',
+    '_JoinedFacebook' => NULL,
+    '_AdditionalItemsNeeded' => 'Yes',
+    '_AdditionalItems' => 'Testimony Needed: It needs to be closer to 500 words and include more of your personal walk with the Lord ',
+  ),
+)

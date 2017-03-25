@@ -167,19 +167,19 @@
 
 				//**IMPORTANT** Add new fields ONLY before the LeadID field and not anywhere else in the middle or end of this array!!
 				//							Otherwise it will mess up the ordering of the fields used elsewhere in the code!
-				fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+				fields: ['LastName','FirstName', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PersonalInfoReceived','_PaidAppFee', '_PhotoIDReceived', '_PersonalReference', '_PasterReferenceReceived',
 					'_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-					'_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+					'_College3TranscriptsReceived','_AcademicAppealNeeded', '_AdditionalItemsNeeded',
+					'_AdditionalItems','_PreliminaryApplicationReceived','_DateofApplicationComplete','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
 					'_SentArrivalInformation0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
 					'_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized',
-					'_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded',
-					'_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
+					'_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
 				gridData: [],
-				headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner','Year','Sem/ Quad', 'Paid App Fee', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
-					'Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Photo Id','Acdmc Appeal', 'Room Depo', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
+				headerNames: ['Last Name', 'First Name', 'Program', 'Stage', 'Owner','Year','Sem/ Quad', 'Pers Info', 'Paid App Fee','Photo Id', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
+					'Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Acdmc Appeal','Adtnl Items Need?','Adtnl Items','Prelim App','Date Applied', 'Room Depo', 'PT Quest.', 'Rmate Quest.', 'Arrive Form',
 					'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FAFSA Apply','VFAO Intrvw','Fin Aid Final',
-					'Reg. Class','Online Orient', 'Join FB Group','Adtnl Items Need?','Adtnl Items'],
+					'Reg. Class','Online Orient', 'Join FB Group'],
 				owners:[],
 				programs:programs,
 				stages:[],
@@ -315,12 +315,13 @@
 					{
 						fieldVal = fieldVal!=undefined ? fieldVal.toLowerCase() : fieldVal;
 
-						if(fieldVal=="yes" || fieldVal=="not needed") classColor = " green"
+						if(fieldVal=="yes" || fieldVal=="not needed" || fieldVal=="waived") classColor = " green"
 						if(fieldVal=="no" ) classColor = " red"
 
 						if(field=='_AdditionalItemsNeeded')
 						{
-						  classColor = fieldVal!=undefined ? " green" : ""
+						  classColor = fieldVal!= undefined ? " green" : ""
+						  if(fieldVal=="yes" ) classColor = " red"
 						}
 
 						if(field=='_AdditionalItems')
@@ -336,10 +337,10 @@
 					if (index >= 0 && index < 5) {
 						classPos = " one";
 					}
-					if (index >= 5 && index < 15) {
+					if (index >= 5 && index < 21) {
 						classPos = " two";
 					}
-					if (index >= 15 && index < 34) {
+					if (index >= 21 && index < 36) {
 						classPos = " three";
 					}
 					return classColor+classPos+classActive;
@@ -351,6 +352,16 @@
 						if(field=='LastName')
 						{
 						  fieldVal = '<a href="'+this.contactUrl+record.Id+'" target="_blank">' + fieldVal + '</a>';
+						}
+						if(field=='_DateofApplicationComplete')
+						{
+							var year        = fieldVal.substring(0,4);
+							var month       = fieldVal.substring(4,6);
+							var day         = fieldVal.substring(6,8);
+
+							var date        = new Date(year, month-1, day);
+							fieldVal = date.toLocaleDateString();
+
 						}
 						return fieldVal
 					}
@@ -378,6 +389,7 @@
 									ddlWaived: ['No', 'Yes', 'Waived'],
 									ddlBinary: ['No', 'Yes'],
 									ddlNotNeeded: ['No', 'Yes', 'Not Needed'],
+									ddlTranscripts: ['No','Yes','Not Needed', 'Requested'],
 									programs:programs,
 									progCategories:progCategories
 
@@ -429,6 +441,10 @@
 						'</div>'+
 
 						'<div id="appSteps">' +
+							'<div class="field"><label>Personal Info Received</label><select id="_PersonalInfoReceived_input">' +
+							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+							'<option :selected="ddlSelected(n,\'_PersonalInfoReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+							'</select></div>' +
 							'<div class="field"><label>Paid App Fee</label><select id="_PaidAppFee_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
 							'<option :selected="ddlSelected(n,\'_PaidAppFee\')" v-for="n of ddlWaived" :value="n">{{n}}</option>' +
@@ -447,17 +463,22 @@
 							'</select></div>' +
 							'<div class="field"><label>HS/GED Transcript?</label><select id="_HighSchoolTranscriptReceived_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_HighSchoolTranscriptReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_HighSchoolTranscriptReceived\')" v-for="n of ddlTranscripts" :value="n">{{n}}</option>' +
 							'</select></div>' +
 							'<div class="field"><label>Clg Transcript 1</label><select id="_MostRecentCollegeTranscriptsReceived_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_MostRecentCollegeTranscriptsReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_MostRecentCollegeTranscriptsReceived\')" v-for="n of ddlTranscripts" :value="n">{{n}}</option>' +
 							'</select></div>' +
 							'<div class="field"><label>Clg Transcript 2</label><select id="_CollegeTranscript2Received_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_CollegeTranscript2Received\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_CollegeTranscript2Received\')" v-for="n of ddlTranscripts" :value="n">{{n}}</option>' +
 							'</select></div>' +
 							'<div class="field"><label>Clg Transcript 3</label><select id="_College3TranscriptsReceived_input">' +
+							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
+							'<option :selected="ddlSelected(n,\'_College3TranscriptsReceived\')" v-for="n of ddlTranscripts" :value="n">{{n}}</option>' +
+							'</select></div>' +
+
+							'<div class="field"><label>Prelim App</label><select id="_PreliminaryApplicationReceived_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
 							'<option :selected="ddlSelected(n,\'_College3TranscriptsReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
@@ -478,7 +499,7 @@
 							'</select></div>' +
 							'<div class="field"><label>Class Registered?</label><select id="_RegisteredForClasses_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_RegisteredForClasses\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_RegisteredForClasses\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 
 							'<div class="field"><label>Online Orient?</label><select id="_OnlineOrientationSeminarComplete_input">' +
@@ -521,16 +542,16 @@
 
 							'<div class="field"><label>FAFSA?</label><select id="_AppliedforFAFSA_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_AppliedforFAFSA\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_AppliedforFAFSA\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 							'<div class="field"><label>VFAO Interview?</label><select id="_CompletedVFAOStudentInterview_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_CompletedVFAOStudentInterview\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_CompletedVFAOStudentInterview\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 
 							'<div class="field"><label>Fin Aid Final?</label><select id="_FinancialAidFinalized_input">' +
 							'<option :selected="ddlSelected(0)" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_FinancialAidFinalized\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_FinancialAidFinalized\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 
 							'<div class="field"><label>Joined Facebook?</label><select id="_JoinedFacebook_input">' +

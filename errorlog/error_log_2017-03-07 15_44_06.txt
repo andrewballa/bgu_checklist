@@ -1,0 +1,46 @@
+INFUSIONSOFT API ERROR MESSAGE: 2017-03-07 15:44:06
+Didn't receive 200 OK from remote server. (HTTP/1.1 504 Gateway Timeout)
+
+ContactService.update
+
+array (
+  0 => '1fb3245bda5f2517cf678c1cf28946a1',
+  1 => 45276,
+  2 => 
+  array (
+    'FirstName' => 'Thomas',
+    'LastName' => 'Haizlip',
+    '_ProgramInterestedIn0' => 'BA Intercultural Ministry Studies and Bible and Theology',
+    'OwnerID' => '47084',
+    '_YearAppliedFor' => '2018 ',
+    '_SemesterQuadAppliedFor' => 'Spring ',
+    '_PersonalInfoReceived' => 'No',
+    '_PaidAppFee' => 'No',
+    '_PersonalReference' => 'No',
+    '_PasterReferenceReceived' => 'No',
+    '_TeacherEmployerReferenceReceived' => 'No',
+    '_HighSchoolTranscriptReceived' => 'No',
+    '_MostRecentCollegeTranscriptsReceived' => 'Not Needed',
+    '_CollegeTranscript2Received' => 'Not Needed',
+    '_College3TranscriptsReceived' => 'Not Needed',
+    '_PreliminaryApplicationReceived' => NULL,
+    '_PhotoIDReceived' => 'Yes',
+    '_PaidRoomDeposit0' => NULL,
+    '_AcademicAppealNeeded' => 'Not Needed',
+    '_RegisteredForClasses' => 'No',
+    '_OnlineOrientationSeminarComplete' => 'No',
+    '_FilledoutPTQuestionnaire0' => NULL,
+    '_FilledOutRoommateQuestionnaire' => NULL,
+    '_SentArrivalInformation0' => NULL,
+    '_FinalHighSchoolTranscriptsReceived' => 'No',
+    '_AppliedforFAFSA' => 'Not Needed',
+    '_FinalCollege1TranscriptReceived' => 'No',
+    '_FinalCollege2TranscriptReceived' => 'No',
+    '_FinalCollege3TranscriptReceived' => 'Not Needed',
+    '_CompletedVFAOStudentInterview' => 'Not Needed',
+    '_FinancialAidFinalized' => 'Not Needed',
+    '_JoinedFacebook' => NULL,
+    '_AdditionalItemsNeeded' => 'No',
+    '_AdditionalItems' => '',
+  ),
+)

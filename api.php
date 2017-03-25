@@ -15,11 +15,11 @@ function getContacts() {
   // '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
   // '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
-    $contactFields = array('Id','LastName','FirstName', '_ProgramInterestedIn0','OwnerID','_YearAppliedFor','_SemesterQuadAppliedFor','_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
+    $contactFields = array('Id','LastName','FirstName', '_ProgramInterestedIn0','OwnerID','_YearAppliedFor','_SemesterQuadAppliedFor','_PersonalInfoReceived','_PaidAppFee', '_PersonalReference', '_PasterReferenceReceived',
     '_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
-    '_College3TranscriptsReceived', '_PhotoIDReceived','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
+    '_College3TranscriptsReceived',  '_PreliminaryApplicationReceived','_PhotoIDReceived','_DateofApplicationComplete','_AcademicAppealNeeded','_PaidRoomDeposit0', '_FilledoutPTQuestionnaire0', '_FilledOutRoommateQuestionnaire',
     '_SentArrivalInformation0', '_FilledOutImmunizationForm0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-    '_FinalCollege3TranscriptReceived', '_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
+    '_FinalCollege3TranscriptReceived','_AppliedforFAFSA', '_CompletedVFAOStudentInterview', '_FinancialAidFinalized','_AppliedforStudentLoansoptional',
     '_SentEmergencyContactInformation', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_JoinedFacebook', '_AdditionalItemsNeeded', '_AdditionalItems');
 
     $allDBContacts= recursiveFetchData("Contact",array('FirstName'=>'%'),$contactFields);
@@ -29,7 +29,7 @@ function getContacts() {
 function getStages($stageTye) {
     //ID's of the BGU Application stages (from Infusionsoft), only display students who are in these stages
     //refer to the file "test_data/allstages.json" to see what Stages these ID's belong to
-    $stageIds = array('39','41','43','51','57','59','61','63','80','82','84','86','88','98','100','102','106','108','110','114','116','118');
+    $stageIds = array('39','41','43','51','57','59','61','63','80','82','84','86','88','98','100','102','106','108','110','112','114','116','118');
 
     $call4 = buildXmlCall_query("Stage",1000,0,array('Id'=>'%'),array("Id","StageName","StageOrder"));
     $stages = executeApiCall($call4);
@@ -115,10 +115,10 @@ function updateContact() {
     $contactArray =  array(
         "FirstName" => $_REQUEST["FirstName"],"LastName" => $_REQUEST["LastName"],"_ProgramInterestedIn0" => $_REQUEST["_ProgramInterestedIn0"],"OwnerID" => $_REQUEST["OwnerID"],
         "_YearAppliedFor" => $_REQUEST["_YearAppliedFor"],"_SemesterQuadAppliedFor" => $_REQUEST["_SemesterQuadAppliedFor"],
-        "_PaidAppFee" => $_REQUEST["_PaidAppFee"],"_PersonalReference" => $_REQUEST["_PersonalReference"],"_PasterReferenceReceived" => $_REQUEST["_PasterReferenceReceived"],
+        "_PersonalInfoReceived" => $_REQUEST["_PersonalInfoReceived"],"_PaidAppFee" => $_REQUEST["_PaidAppFee"],"_PersonalReference" => $_REQUEST["_PersonalReference"],"_PasterReferenceReceived" => $_REQUEST["_PasterReferenceReceived"],
         "_TeacherEmployerReferenceReceived" => $_REQUEST["_TeacherEmployerReferenceReceived"],"_HighSchoolTranscriptReceived" => $_REQUEST["_HighSchoolTranscriptReceived"],
         "_MostRecentCollegeTranscriptsReceived" => $_REQUEST["_MostRecentCollegeTranscriptsReceived"],"_CollegeTranscript2Received" => $_REQUEST["_CollegeTranscript2Received"],
-        "_College3TranscriptsReceived" => $_REQUEST["_College3TranscriptsReceived"],"_PhotoIDReceived" => $_REQUEST["_PhotoIDReceived"],
+        "_College3TranscriptsReceived" => $_REQUEST["_College3TranscriptsReceived"],"_PreliminaryApplicationReceived" => $REQUEST["_PreliminaryApplicationReceived"],"_PhotoIDReceived" => $_REQUEST["_PhotoIDReceived"],
         "_PaidRoomDeposit0" => $_REQUEST["_PaidRoomDeposit0"],"_AcademicAppealNeeded" => $_REQUEST["_AcademicAppealNeeded"],
         "_RegisteredForClasses" => $_REQUEST["_RegisteredForClasses"],"_OnlineOrientationSeminarComplete" => $_REQUEST["_OnlineOrientationSeminarComplete"],"_FilledoutPTQuestionnaire0" => $_REQUEST["_FilledoutPTQuestionnaire0"],
         "_FilledOutRoommateQuestionnaire" => $_REQUEST["_FilledOutRoommateQuestionnaire"],"_SentArrivalInformation0" => $_REQUEST["_SentArrivalInformation0"],
