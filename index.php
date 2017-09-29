@@ -166,17 +166,17 @@
 
 				//**IMPORTANT** Add new fields ONLY before the LeadID field and not anywhere else in the middle or end of this array!!
 				//							Otherwise it will mess up the ordering of the fields used elsewhere in the code!
-				fields: ['LastName','FirstName', '_DateofAppStart', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PersonalInfoReceived','_PaidAppFee', '_PhotoIDReceived', '_PersonalReference', '_PasterReferenceReceived',
+				fields: ['LastName','FirstName', '_DateofAppStart', '_ProgramInterestedIn0', 'StageName', 'OwnerName','_YearAppliedFor','_SemesterQuadAppliedFor','_PersonalInfoReceived', '_PaidAppFee', '_PhotoIDReceived', '_PersonalReference', '_PasterReferenceReceived',
 					'_TeacherEmployerReferenceReceived', '_HighSchoolTranscriptReceived', '_MostRecentCollegeTranscriptsReceived', '_CollegeTranscript2Received',
 					'_College3TranscriptsReceived','_AcademicAppealNeeded', '_AdditionalItemsNeeded',
 					'_AdditionalItems','_PreliminaryApplicationReceived','_DateofApplicationComplete','_PaidRoomDeposit0', '_FilledOutRoommateQuestionnaire',
 					'_SentArrivalInformation0', '_FinalHighSchoolTranscriptsReceived','_FinalCollege1TranscriptReceived','_FinalCollege2TranscriptReceived',
-					'_FinalCollege3TranscriptReceived', '_FinancialAidStatus', '_RegisteredForClasses','_OnlineOrientationSeminarComplete', '_TitleIXComplete', '_JoinedFacebook', 'LeadID', 'StageID', 'OwnerID', 'Id'],
+					'_FinalCollege3TranscriptReceived', '_FinancialAidStatus', '_SignedHandbook','_OnlineOrientationSeminarComplete', '_TitleIXComplete', '_JoinedFacebook', 'LeadID', 'StageID', 'OwnerID', 'Id'],
 
 				gridData: [],
-				headerNames: ['Last Name', 'First Name', 'Date STRT', 'Program', 'Stage', 'Owner','Year','Sem/ Quad', 'Pers Info', 'Paid App Fee','Photo Id', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran',
-					'Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Acdmc Appeal','Adtnl Items Need?','Adtnl Items','Prelim App','Date Comp', 'Room Depo', 'Rmate Quest.', 'Arrive Form',
-					'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FinAid', 'Reg. Class','Online Orient', 'Title IX', 'Join FB Group'],
+				
+				headerNames: ['Last Name', 'First Name', 'Date STRT', 'Program', 'Stage', 'Owner','Year','Sem/ Quad', 'Pers Hist', 'Paid App Fee','Photo Id', 'Pers Ref', 'Pstr Ref', 'Teach Ref', 'HS Tran','Clg Tran 1', 'Clg Tran 2', 'Clg Tran 3','Acdmc Appeal','Adtnl Items Need?','Adtnl Items','Prelim App','Date Comp', 'Room Depo', 'Rmate Quest.', 'Arrive Form',
+					'Final HS Tran','Final Clg Tran1','Final Clg Tran2','Final Clg Tran3', 'FinAid', 'Handbook','Online Orient', 'Title IX', 'Join FB Group'],
 				owners:[],
 				programs:programs,
 				stages:[],
@@ -254,8 +254,15 @@
 				}).done(function (response) {
 					var contactdata = JSON.parse(response)// JSON.parse(response)
 					$('#app').show();
-					vm.gridData = contactdata
 					swal.close()
+					if(contactdata.errormsg)
+					{
+						console.log("Error" + contactdata.errormsg)
+					}
+					else
+					{
+						vm.gridData = contactdata
+					}
 				}).fail(function (xhr, statusText, error) {
 					console.log(error)
 				})
@@ -448,7 +455,7 @@
 						'</div>'+
 
 						'<div id="appSteps">' +
-							'<div class="field"><label>Personal Info Received</label><select id="_PersonalInfoReceived_input">' +
+							'<div class="field"><label>Personal History Received</label><select id="_PersonalInfoReceived_input">' +
 							'<option :selected="ddlSelected(0,\'\')" value="unselected">Select One...</option>' +
 							'<option :selected="ddlSelected(n,\'_PersonalInfoReceived\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
@@ -458,7 +465,7 @@
 							'</select></div>' +
 							'<div class="field"><label>Personal Ref?</label><select id="_PersonalReference_input">' +
 							'<option :selected="ddlSelected(0,\'\')" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_PersonalReference\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_PersonalReference\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 							'<div class="field"><label>Pastoral Ref?</label><select id="_PasterReferenceReceived_input">' +
 							'<option :selected="ddlSelected(0,\'\')" value="unselected">Select One...</option>' +
@@ -504,9 +511,9 @@
 							'<option :selected="ddlSelected(0,\'\')" value="unselected">Select One...</option>' +
 							'<option :selected="ddlSelected(n,\'_PaidRoomDeposit0\')" v-for="n of ddlBinary" :value="n">{{n}}</option>' +
 							'</select></div>' +
-							'<div class="field"><label>Class Registered?</label><select id="_RegisteredForClasses_input">' +
+							'<div class="field"><label>Handbook?</label><select id="_SignedHandbook_input">' +
 							'<option :selected="ddlSelected(0,\'\')" value="unselected">Select One...</option>' +
-							'<option :selected="ddlSelected(n,\'_RegisteredForClasses\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
+							'<option :selected="ddlSelected(n,\'_SignedHandbook\')" v-for="n of ddlNotNeeded" :value="n">{{n}}</option>' +
 							'</select></div>' +
 
 							'<div class="field"><label>Online Orient?</label><select id="_OnlineOrientationSeminarComplete_input">' +

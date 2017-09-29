@@ -95,22 +95,29 @@ function recursiveFetchData($table,$struct_SearchFields,$array_FieldsToReturn)
     $page = 0;
     //$all_records = null;
 
-    while(true)
-    {
-        $call = buildXmlCall_query($table,1000,$page,$struct_SearchFields,$array_FieldsToReturn);
-        $records = executeApiCall($call);
-        //$all_records[] = $records;
-
-        foreach ($records as $v) { //append all elements of current array to main array
-            $all_records[] = $v;
-        }
-
-        if(count($records) < 1000)
+    try{
+        while(true)
         {
-            break;
+            $call = buildXmlCall_query($table,1000,$page,$struct_SearchFields,$array_FieldsToReturn);
+            $records = executeApiCall($call);
+            //$all_records[] = $records;
+
+            foreach ($records as $v) { //append all elements of current array to main array
+                $all_records[] = $v;
+            }
+
+            if(count($records) < 1000)
+            {
+                break;
+            }
+            $page++;
         }
-        $page++;
     }
+    catch(Exception $e)
+    {
+        echo("something happened"); 
+    }
+
     return $all_records;
 }
 
